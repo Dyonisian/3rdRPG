@@ -15,6 +15,8 @@ enum class EModuleTypes : uint8
 	S_Gun UMETA(DisplayName= "Gun"),
 	S_Missile UMETA(DisplayName= "Missile")
 };
+
+class AEnemyPawn;
 UCLASS()
 class THIRDRPG_API AEnemyModule : public AActor
 {
@@ -35,7 +37,6 @@ protected:
 	const float MaxHealth = 200.0f;
 	float Health;
 
-	EModuleTypes ModuleType;
 	bool IsModuleActive;
 
 	void AddModules();
@@ -50,14 +51,30 @@ protected:
 	TSubclassOf<class AActor> GunProjectile;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AActor> MissileProjectile;
+
+	TArray<FVector> ModulePositions;
+
+	AEnemyPawn* OwnerPawn;
+
+	bool IsModuleAdded;
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UStaticMeshComponent* CollisionComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EModuleTypes ModuleType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TArray<TSubclassOf<class AEnemyModule>> ModuleList;
 
 	EModuleTypes GetModuleType() { return ModuleType; }
 	void SetModuleType(EModuleTypes moduleType) { ModuleType = moduleType; IsModuleActive = true; }
+
+	void SetOwnerPawn(AEnemyPawn* pawn) { OwnerPawn = pawn; }
+
+
 
 
 };
