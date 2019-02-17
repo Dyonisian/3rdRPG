@@ -25,7 +25,15 @@ AEnemyPawn::AEnemyPawn()
 void AEnemyPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	CollisionComponent = FindComponentByClass<UStaticMeshComponent>();
+	auto components = GetComponents();
+	for (auto &com : components)
+	{
+		if (com->GetName() == "EnemyPawnCol")
+		{
+			CollisionComponent = Cast<UStaticMeshComponent>(com);
+			break;
+		}
+	}
 	if (CollisionComponent)
 	{
 		CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyPawn::OnOverlap);

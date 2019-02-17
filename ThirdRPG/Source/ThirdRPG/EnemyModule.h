@@ -44,6 +44,7 @@ protected:
 
 	const float GunCooldown = 0.2f;
 	const float MissileCooldown = 3.0f;
+	int GunBurstCount = 0;
 
 	float StateTimer;
 

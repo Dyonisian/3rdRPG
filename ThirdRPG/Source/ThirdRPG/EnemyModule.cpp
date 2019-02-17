@@ -12,7 +12,7 @@ AEnemyModule::AEnemyModule()
 	//ModuleType = EModuleTypes::S_Gun;
 	PrimaryActorTick.bCanEverTick = true;
 	IsModuleActive = true;
-	StateTimer = 0.0f;
+	StateTimer = FMath::RandRange(0.0f, 10.0f);
 	ModulePositions.Push(FVector(0, 0, -1));
 	ModulePositions.Push(FVector(-1, 0, 0));
 	ModulePositions.Push(FVector(1, 0, 0));
@@ -46,6 +46,8 @@ void AEnemyModule::BeginPlay()
 void AEnemyModule::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (!IsModuleActive)
+		return;
 	DrawDebugLine(GetWorld(), GetActorLocation() + ModulePositions[1] * 170, GetActorLocation() + ModulePositions[1] * 250, FColor::Blue, true);
 
 	if (ModuleType == EModuleTypes::S_Holder && OwnerPawn && !IsModuleAdded)
@@ -62,6 +64,9 @@ void AEnemyModule::Tick(float DeltaTime)
 			ActionFire();
 			break;
 		case EModuleTypes::S_Gun: StateTimer = GunCooldown;
+			GunBurstCount++;
+			if (GunBurstCount >= 3)
+				StateTimer = GunCooldown * 3;
 			ActionFire();
 			break;
 		}
@@ -108,8 +113,8 @@ void AEnemyModule::AddModules()
 			spawnPos = endPos;
 
 		auto spawnedModule = Cast<AEnemyModule>(GetWorld()->SpawnActor<AActor>(module, spawnPos, newrot, spawnParams));
-		//FAttachmentTransformRules attachRules(EAttachmentRule::SnapToTarget,false);
-		//AttachToActor(this, attachRules);
+		FAttachmentTransformRules attachRules(EAttachmentRule::KeepWorld, false);
+		spawnedModule->AttachToActor(OwnerPawn, attachRules);
 		spawnedModule->SetOwnerPawn(OwnerPawn);
 		OwnerPawn->IncrementModuleCount();
 
@@ -162,7 +167,10 @@ void AEnemyModule::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 			Health -= 10;
 			if (Health <= 0)
 			{
-				Destroy();
+				IsModuleActive = false;
+				FDetachmentTransformRules detachRules(EDetachmentRule::KeepRelative,false);
+				DetachFromActor(detachRules);
+				FindComponentByClass<UStaticMeshComponent>()->SetSimulatePhysics(true);
 			}
 			OtherActor->Destroy();
 		}

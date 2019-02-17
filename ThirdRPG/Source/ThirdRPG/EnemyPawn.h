@@ -27,7 +27,7 @@ protected:
 	float Health;
 	void AddModules();
 	int ModuleCount;
-	const int MaxModules = 12;
+	const int MaxModules = 24;
 	TArray<FVector> ModulePositions;
 
 public:	
