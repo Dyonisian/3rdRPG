@@ -20,6 +20,7 @@ class AThirdRPGCharacter : public ACharacter
 	class UCameraComponent* FollowCamera;
 
 	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
 public:
 	AThirdRPGCharacter();
 
@@ -61,19 +62,26 @@ protected:
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
 	void AimDownSight();
-
 	void StopAim();
-
 	void LerpCamera();
-
-	bool IsCameraLerping;
+	void ActionFire();
+	bool IsCameraLerping, IsAiming;
 	float CameraLerpTime, CameraTargetDistance, CameraStartDistance;
 	const float CameraLerpRate = 4.0f;
 	FVector CameraTargetOffset, CameraStartOffset;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AActor> MyProjectile;
+	bool IsFiring;
+	void ToggleIsFiring();
+	const float FireCooldown = 0.2f;
+	float FireTime;
+	
 
-
-
-
+	void ActionDodge();
+	void ResetActionDodge();
+	FTimerHandle DodgeTimerHandle;
+	const float DodgeTime = 0.2f;
+	bool IsDodge;
 
 protected:
 	// APawn interface
@@ -85,5 +93,10 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UFUNCTION(BlueprintCallable)
+		bool GetDodge();
+	UFUNCTION(BlueprintImplementableEvent)
+		void ToggleCrosshair();
 };
 

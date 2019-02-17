@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "TimerManager.h"
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AThirdRPGCharacter
@@ -43,8 +45,8 @@ AThirdRPGCharacter::AThirdRPGCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	IsCameraLerping = false;
-	CameraLerpTime = 0.0f;
+	IsCameraLerping = IsDodge= IsAiming = IsFiring = false;
+	CameraLerpTime = FireTime = 0.0f;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -58,6 +60,19 @@ void AThirdRPGCharacter::Tick(float DeltaTime)
 		CameraLerpTime += GetWorld()->GetDeltaSeconds() * CameraLerpRate;
 		LerpCamera();
 	}
+	FireTime -= GetWorld()->GetDeltaSeconds();
+	if (IsFiring && FireTime<=0.0f)
+	{
+		FireTime = FireCooldown;
+		ActionFire();
+	}
+}
+void AThirdRPGCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	PrimaryActorTick.bCanEverTick = true;
+
+	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,6 +86,9 @@ void AThirdRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("AimDownSight", IE_Pressed, this, &AThirdRPGCharacter::AimDownSight);
 	PlayerInputComponent->BindAction("AimDownSight", IE_Released, this, &AThirdRPGCharacter::StopAim);
+	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AThirdRPGCharacter::ActionDodge);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AThirdRPGCharacter::ToggleIsFiring);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AThirdRPGCharacter::ToggleIsFiring);
 
 
 
@@ -114,7 +132,7 @@ void AThirdRPGCharacter::AimDownSight()
 	CameraTargetDistance = 180.0f;
 	CameraTargetOffset = FVector(0, 150, 70.0f);
 	IsCameraLerping = true;
-	UE_LOG(LogTemp, Warning, TEXT("CameraLerping"));
+	//UE_LOG(LogTemp, Warning, TEXT("CameraLerping"));
 	CameraStartDistance = CameraBoom->TargetArmLength;
 	CameraStartOffset = CameraBoom->SocketOffset;
 	CameraLerpTime = 0.0f;
@@ -123,6 +141,9 @@ void AThirdRPGCharacter::AimDownSight()
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
+	IsAiming = true;
+	ToggleCrosshair();
+
 
 }
 void AThirdRPGCharacter::StopAim()
@@ -130,7 +151,7 @@ void AThirdRPGCharacter::StopAim()
 	CameraTargetDistance = 340.0f;
 	CameraTargetOffset = FVector(0, 0, 30.0f);
 	IsCameraLerping = true;
-	UE_LOG(LogTemp, Warning, TEXT("CameraLerping"));
+	//UE_LOG(LogTemp, Warning, TEXT("CameraLerping"));
 	CameraStartDistance = CameraBoom->TargetArmLength;
 	CameraStartOffset = CameraBoom->SocketOffset;
 	CameraLerpTime = 0.0f;
@@ -138,6 +159,66 @@ void AThirdRPGCharacter::StopAim()
 	FollowCamera->bUsePawnControlRotation = false;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	IsAiming = false;
+	ToggleCrosshair();
+
+}
+void AThirdRPGCharacter::ActionDodge()
+{
+	if (!GetMovementComponent()->IsFalling())
+	{
+		IsDodge = true;
+
+		LaunchCharacter(FVector(0, 0, 1) * 250 + GetVelocity(), false, false);
+		GetWorldTimerManager().SetTimer(DodgeTimerHandle, this, &AThirdRPGCharacter::ResetActionDodge, DodgeTime, false);
+	}
+}
+void AThirdRPGCharacter::ActionFire()
+{
+	FVector startPos = GetActorLocation() + GetActorForwardVector() * 15 + FVector::UpVector * 20;
+	FVector endPos;
+	if (!IsAiming)
+	{
+		endPos = startPos + GetActorForwardVector() * 10000 + FVector::UpVector * 20;
+	}
+	else
+	{
+		endPos = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 10000 + FollowCamera->GetRightVector() * 600 + FVector::UpVector * 100;
+	}
+	FHitResult outHit;
+	FCollisionQueryParams collisionParams;
+
+	DrawDebugLine(GetWorld(), startPos, endPos, FColor::Green, true);
+	if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
+	{
+		if (outHit.bBlockingHit)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit %s"),*outHit.GetActor()->GetName());
+			FActorSpawnParameters spawnParams;
+			spawnParams.Owner = this;
+			auto Dest = outHit.Location;
+			auto RotateDirection = Dest - startPos;
+			RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
+			FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
+			//UE_LOG(LogTemp, Warning, TEXT("Rat - Newrot is %s and old rot is %s"),*newrot.ToString(), *ControlledPawn->GetActorRotation().ToString());
+			//newrot.Roll = ControlledCharacter->GetActorRotation().Roll;
+
+			GetWorld()->SpawnActor<AActor>(MyProjectile, startPos, newrot, spawnParams);
+		}
+	}
+}
+void AThirdRPGCharacter::ToggleIsFiring()
+{
+	IsFiring = !IsFiring;
+}
+void AThirdRPGCharacter::ResetActionDodge()
+{
+	IsDodge = false;
+}
+bool AThirdRPGCharacter::GetDodge()
+{
+	return IsDodge;
 }
 
 void AThirdRPGCharacter::LerpCamera()
@@ -147,7 +228,7 @@ void AThirdRPGCharacter::LerpCamera()
 	{
 		CameraLerpTime = 1.0f;
 		IsCameraLerping = false;
-		UE_LOG(LogTemp, Warning, TEXT("Camera Stopped"));
+		//UE_LOG(LogTemp, Warning, TEXT("Camera Stopped"));
 	}
 
 	CameraBoom->TargetArmLength = FMath::Lerp(CameraStartDistance, CameraTargetDistance, CameraLerpTime);
