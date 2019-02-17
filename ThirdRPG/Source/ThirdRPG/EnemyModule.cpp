@@ -91,7 +91,7 @@ void AEnemyModule::AddModules()
 
 		if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
 		{			
-				UE_LOG(LogTemp, Warning, TEXT("Nope, hit something! ") );
+				UE_LOG(LogTemp, Warning, TEXT("Nope, hit something!"));
 				continue;	
 		}
 		FActorSpawnParameters spawnParams;
@@ -100,9 +100,7 @@ void AEnemyModule::AddModules()
 		auto RotateDirection = Dest - startPos;
 		RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
 		FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
-		auto moduleNo = FMath::RandRange(0, 7);
-		if (moduleNo > 4)
-			moduleNo = 0;
+		auto moduleNo = FMath::RandRange(0, 4);		
 		auto module = ModuleList[moduleNo];
 
 		FVector spawnPos = startPos;

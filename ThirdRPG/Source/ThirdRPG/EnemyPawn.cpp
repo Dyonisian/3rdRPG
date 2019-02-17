@@ -90,8 +90,8 @@ void AEnemyPawn::AddModules()
 			spawnPos = endPos;
 	
 		auto spawnedModule = Cast<AEnemyModule>(GetWorld()->SpawnActor<AActor>(module, spawnPos, newrot, spawnParams));
-		//FAttachmentTransformRules attachRules(EAttachmentRule::SnapToTarget,false);
-		//AttachToActor(this, attachRules);
+		FAttachmentTransformRules attachRules(EAttachmentRule::KeepWorld,false);
+		spawnedModule->AttachToActor(this, attachRules);
 		spawnedModule->SetOwnerPawn(this);
 		ModuleCount++;
 
