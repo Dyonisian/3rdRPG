@@ -23,8 +23,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	//Health
 	const float MaxHealth = 200.0f;
 	float Health;
+
+	//Modules
 	void AddModules();
 	int ModuleCount;
 	int MaxModules = 24;

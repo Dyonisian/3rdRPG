@@ -66,6 +66,7 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
+	//Aiming and shooting
 	void AimDownSight();
 	void StopAim();
 	void LerpCamera();
@@ -81,13 +82,14 @@ protected:
 	const float FireCooldown = 0.2f;
 	float FireTime;
 	
-
+	//Dodge
 	void ActionDodge();
 	void ResetActionDodge();
 	FTimerHandle DodgeTimerHandle;
 	const float DodgeTime = 0.2f;
 	bool IsDodge;
 
+	//Health
 	const float MaxHealth = 200.0f;
 
 
@@ -103,9 +105,9 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	UFUNCTION(BlueprintCallable)
-		bool GetDodge();
+	bool GetDodge();
 	UFUNCTION(BlueprintImplementableEvent)
-		void ToggleCrosshair();
+	void ToggleCrosshair();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Health;

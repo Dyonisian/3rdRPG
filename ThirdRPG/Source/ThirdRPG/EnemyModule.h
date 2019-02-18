@@ -38,12 +38,17 @@ protected:
 	float Health;
 
 	bool IsModuleActive;
+	TArray<FVector> ModulePositions;
+	bool IsModuleAdded;
 
+	//Actions based on Module Type
 	void AddModules();
 	void ActionFire();
+
 	void OnZeroHealth();
 	void DestroySelf();
 
+	//Firing
 	const float GunCooldown = 0.2f;
 	const float MissileCooldown = 3.0f;
 	const float FlashCooldown = 0.1f;
@@ -59,11 +64,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AActor> MissileProjectile;
 
-	TArray<FVector> ModulePositions;
 
 	AEnemyPawn* OwnerPawn;
-
-	bool IsModuleAdded;
 
 
 public:	

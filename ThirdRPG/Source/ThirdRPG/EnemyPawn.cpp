@@ -64,24 +64,20 @@ void AEnemyPawn::AddModules()
 			continue;
 
 		FVector startPos = GetActorLocation() + pos * 170;
-		FVector endPos;
-		
-			endPos = GetActorLocation() + pos * 250;
-		
+		FVector endPos;		
+		endPos = GetActorLocation() + pos * 250;		
 		FHitResult outHit;
 		FCollisionQueryParams collisionParams;
 
 		DrawDebugLine(GetWorld(), startPos, endPos, FColor::Blue, true);
-
+		//Check if space is already occupied by an object or another module
 		if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
 		{
 			if (outHit.bBlockingHit)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Nope, hit something!"));
-
+				UE_LOG(LogTemp, Warning, TEXT("Can't build, something's in the way"));
 				continue;
-			}
-			
+			}			
 		}
 		FActorSpawnParameters spawnParams;
 		spawnParams.Owner = this;
@@ -89,6 +85,7 @@ void AEnemyPawn::AddModules()
 		auto RotateDirection = Dest - startPos;
 		RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
 		FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
+		//Larger chance for ModuleHolder parts to allow for large enemies
 		auto moduleNo = FMath::RandRange(0, 7);
 		if (moduleNo > 4)
 			moduleNo = 0;
@@ -103,13 +100,8 @@ void AEnemyPawn::AddModules()
 		spawnedModule->AttachToActor(this, attachRules);
 		spawnedModule->SetOwnerPawn(this);
 		ModuleCount++;
-
 	}
-	//raycast in direction, if blocked, continue
-	//else 
-	//randomize a part, move into position, add to parent?
-	//add to parent's counter
-	//if exceeded size, break
+	
 }
 
 // Called every frame
@@ -131,7 +123,6 @@ void AEnemyPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	{
 		if (OtherActor->ActorHasTag(TEXT("CharProjectile")))
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("Ouch"));
 			Health -= 10;
 			if (Health <= 0)
 			{

@@ -61,7 +61,6 @@ void AEnemyModule::Tick(float DeltaTime)
 
 	if (!IsModuleActive)
 		return;
-	//DrawDebugLine(GetWorld(), GetActorLocation() + ModulePositions[1] * 170, GetActorLocation() + ModulePositions[1] * 250, FColor::Blue, true);
 
 	if (ModuleType == EModuleTypes::S_Holder && OwnerPawn && !IsModuleAdded)
 	{
@@ -90,25 +89,23 @@ void AEnemyModule::Tick(float DeltaTime)
 
 void AEnemyModule::AddModules()
 {
-	///Check parent max modules, if exceeded, return
 	//Check list
 	//loop
 	for (int i = 0; i<ModulePositions.Num(); i++)
 	{
+		///Check parent max modules, if exceeded, return
 		if (OwnerPawn->GetModuleCount() >= OwnerPawn->GetMaxModules())
 			break;
 		auto pos = ModulePositions[i];
 				
 		FVector startPos = GetActorLocation() + pos * 170;
 		FVector endPos;
-
 		endPos = GetActorLocation() + pos * 250;
-
 		FHitResult outHit;
 		FCollisionQueryParams collisionParams;
 
-		DrawDebugLine(GetWorld(), startPos, endPos, FColor::Blue, true);
-
+		//DrawDebugLine(GetWorld(), startPos, endPos, FColor::Blue, true);
+		//Check if there's space for a new module
 		if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
 		{			
 				UE_LOG(LogTemp, Warning, TEXT("Nope, hit something!"));
@@ -128,17 +125,12 @@ void AEnemyModule::AddModules()
 			spawnPos = endPos;
 
 		auto spawnedModule = Cast<AEnemyModule>(GetWorld()->SpawnActor<AActor>(module, spawnPos, newrot, spawnParams));
+		
 		FAttachmentTransformRules attachRules(EAttachmentRule::KeepWorld, false);
 		spawnedModule->AttachToActor(OwnerPawn, attachRules);
 		spawnedModule->SetOwnerPawn(OwnerPawn);
 		OwnerPawn->IncrementModuleCount();
-
-	}
-	//raycast in direction, if blocked, continue
-	//else 
-	//randomize a part, move into position, add to parent?
-	//add to parent's counter
-	//if exceeded size, break
+	}	
 }
 
 void AEnemyModule::ActionFire()
@@ -148,27 +140,24 @@ void AEnemyModule::ActionFire()
 	
 	endPos = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
 	
-	FHitResult outHit;
-	FCollisionQueryParams collisionParams;
-
 	DrawDebugLine(GetWorld(), startPos, endPos, FColor::Red, true);
 	
-			//UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *outHit.GetActor()->GetName());
 	FActorSpawnParameters spawnParams;
 	spawnParams.Owner = this;
+
+	//Set rotation to face target
 	auto Dest = endPos;
 	auto RotateDirection = Dest - startPos;
 	RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
 	FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
-	//UE_LOG(LogTemp, Warning, TEXT("Rat - Newrot is %s and old rot is %s"),*newrot.ToString(), *ControlledPawn->GetActorRotation().ToString());
-	//newrot.Roll = ControlledCharacter->GetActorRotation().Roll;
+	
 	TSubclassOf<AActor> projectile;
 	if (ModuleType == EModuleTypes::S_Gun)
 		projectile = GunProjectile;
 	else
 		projectile = MissileProjectile;
-	GetWorld()->SpawnActor<AActor>(projectile, startPos, newrot, spawnParams);
-	
+
+	GetWorld()->SpawnActor<AActor>(projectile, startPos, newrot, spawnParams);	
 }
 
 void AEnemyModule::OnZeroHealth()
@@ -180,7 +169,6 @@ void AEnemyModule::OnZeroHealth()
 	if (ModuleType == EModuleTypes::S_Weak)
 		OnDestroyEvent();
 	GetWorldTimerManager().SetTimer(DestroyTimerHandle, this, &AEnemyModule::DestroySelf, 5.0f, false);
-
 }
 
 void AEnemyModule::DestroySelf()
