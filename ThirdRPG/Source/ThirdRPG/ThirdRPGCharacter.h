@@ -11,6 +11,11 @@ class AThirdRPGCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	UFUNCTION()
+	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	UFUNCTION()
+	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -83,6 +88,9 @@ protected:
 	const float DodgeTime = 0.2f;
 	bool IsDodge;
 
+	const float MaxHealth = 200.0f;
+
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -98,5 +106,9 @@ public:
 		bool GetDodge();
 	UFUNCTION(BlueprintImplementableEvent)
 		void ToggleCrosshair();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Health;
+
 };
 

@@ -54,7 +54,6 @@ void AEnemyModule::Tick(float DeltaTime)
 	FlashTimer -= GetWorld()->GetDeltaSeconds();
 	if (FlashTimer <= 0.0f && IsFlashing)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Reset Material"));
 		ResetMaterial();
 		IsFlashing = false;
 		FlashTimer = 0.0f;
@@ -62,7 +61,7 @@ void AEnemyModule::Tick(float DeltaTime)
 
 	if (!IsModuleActive)
 		return;
-	DrawDebugLine(GetWorld(), GetActorLocation() + ModulePositions[1] * 170, GetActorLocation() + ModulePositions[1] * 250, FColor::Blue, true);
+	//DrawDebugLine(GetWorld(), GetActorLocation() + ModulePositions[1] * 170, GetActorLocation() + ModulePositions[1] * 250, FColor::Blue, true);
 
 	if (ModuleType == EModuleTypes::S_Holder && OwnerPawn && !IsModuleAdded)
 	{

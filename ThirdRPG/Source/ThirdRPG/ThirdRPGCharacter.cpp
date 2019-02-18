@@ -19,6 +19,9 @@ AThirdRPGCharacter::AThirdRPGCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
+	//GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AThirdRPGCharacter::OnOverlap);
+	//GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AThirdRPGCharacter::OnEndOverlap);
+
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
@@ -49,6 +52,34 @@ AThirdRPGCharacter::AThirdRPGCharacter()
 	CameraLerpTime = FireTime = 0.0f;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+}
+void AThirdRPGCharacter::OnOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Ouch"));
+
+	if ((OtherActor != nullptr) && (OtherActor != this) && OtherComp)
+	{
+		if (OtherActor->ActorHasTag(TEXT("GunProjectile")))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Ouch"));
+			Health -= 10;
+			if (Health <= 0)
+			{
+				Destroy();
+			}
+		}
+		if (OtherActor->ActorHasTag(TEXT("Explosion")))
+		{
+			Health -= 30;
+			if (Health <= 0)
+			{				
+				Destroy();
+			}
+		}
+	}
+}
+void AThirdRPGCharacter::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
 }
 void AThirdRPGCharacter::Tick(float DeltaTime)
 {
