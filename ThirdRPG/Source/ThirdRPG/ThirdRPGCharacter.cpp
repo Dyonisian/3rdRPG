@@ -194,7 +194,7 @@ void AThirdRPGCharacter::ActionFire()
 	{
 		if (outHit.bBlockingHit)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Hit %s"),*outHit.GetActor()->GetName());
+			//UE_LOG(LogTemp, Warning, TEXT("Hit %s"),*outHit.GetActor()->GetName());
 			FActorSpawnParameters spawnParams;
 			spawnParams.Owner = this;
 			auto Dest = outHit.Location;

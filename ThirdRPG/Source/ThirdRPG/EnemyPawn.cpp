@@ -44,6 +44,7 @@ void AEnemyPawn::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Collision and overlap setup failed - Pawn"));
 	}
 	Health = MaxHealth;
+	MaxModules = FMath::RandRange(12, 64);
 	AddModules();
 	
 }
@@ -130,13 +131,24 @@ void AEnemyPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	{
 		if (OtherActor->ActorHasTag(TEXT("CharProjectile")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Ouch"));
+			//UE_LOG(LogTemp, Warning, TEXT("Ouch"));
 			Health -= 10;
 			if (Health <= 0)
 			{
+				OnDestroyEvent();
+				OtherActor->Destroy();
 				Destroy();
 			}
-			OtherActor->Destroy();
+		}
+		if (OtherActor->ActorHasTag(TEXT("Explosion")))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Explosion damage!"));
+			Health -= 50;
+			if (Health <= 0)
+			{
+				OnDestroyEvent();
+				Destroy();
+			}
 		}
 	}
 }

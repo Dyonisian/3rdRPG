@@ -5,6 +5,7 @@
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
 #include "EnemyPawn.h"
+#include "TimerManager.h"
 
 // Sets default values
 AEnemyModule::AEnemyModule()
@@ -39,13 +40,26 @@ void AEnemyModule::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Collision and overlap setup failed - Module"));
 	}
 	Health = MaxHealth;
-	
-
+	if (ModuleType == EModuleTypes::S_Weak)
+	{
+		Health = MaxHealth / 4;
+	}
+	FlashTimer = 0.0f;
+	IsFlashing = false;
 }
 // Called every frame
 void AEnemyModule::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	FlashTimer -= GetWorld()->GetDeltaSeconds();
+	if (FlashTimer <= 0.0f && IsFlashing)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reset Material"));
+		ResetMaterial();
+		IsFlashing = false;
+		FlashTimer = 0.0f;
+	}
+
 	if (!IsModuleActive)
 		return;
 	DrawDebugLine(GetWorld(), GetActorLocation() + ModulePositions[1] * 170, GetActorLocation() + ModulePositions[1] * 250, FColor::Blue, true);
@@ -56,6 +70,7 @@ void AEnemyModule::Tick(float DeltaTime)
 		IsModuleAdded = true;
 	}
 	StateTimer -= GetWorld()->GetDeltaSeconds();
+
 	if (StateTimer <= 0.0f)
 	{
 		switch (ModuleType)
@@ -71,6 +86,7 @@ void AEnemyModule::Tick(float DeltaTime)
 			break;
 		}
 	}
+	
 }
 
 void AEnemyModule::AddModules()
@@ -156,23 +172,51 @@ void AEnemyModule::ActionFire()
 	
 }
 
+void AEnemyModule::OnZeroHealth()
+{
+	IsModuleActive = false;
+	FDetachmentTransformRules detachRules(EDetachmentRule::KeepRelative, false);
+	DetachFromActor(detachRules);
+	FindComponentByClass<UStaticMeshComponent>()->SetSimulatePhysics(true);
+	if (ModuleType == EModuleTypes::S_Weak)
+		OnDestroyEvent();
+	GetWorldTimerManager().SetTimer(DestroyTimerHandle, this, &AEnemyModule::DestroySelf, 5.0f, false);
+
+}
+
+void AEnemyModule::DestroySelf()
+{
+	Destroy();
+}
+
 
 void AEnemyModule::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && OtherComp)
 	{
+		if (!IsModuleActive)
+			return;
 		if (OtherActor->ActorHasTag(TEXT("CharProjectile")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Ouch"));
+			//UE_LOG(LogTemp, Warning, TEXT("Ouch"));
 			Health -= 10;
+			FlashTimer = FlashCooldown;
+			IsFlashing = true;
+			FlashRed();
 			if (Health <= 0)
 			{
-				IsModuleActive = false;
-				FDetachmentTransformRules detachRules(EDetachmentRule::KeepRelative,false);
-				DetachFromActor(detachRules);
-				FindComponentByClass<UStaticMeshComponent>()->SetSimulatePhysics(true);
+				OnZeroHealth();
 			}
 			OtherActor->Destroy();
+		}
+		if (OtherActor->ActorHasTag(TEXT("Explosion")))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Explosion damage!"));
+			Health -= 100;
+			if (Health <= 0)
+			{
+				OnZeroHealth();
+			}
 		}
 	}
 }

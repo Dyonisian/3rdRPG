@@ -27,7 +27,7 @@ protected:
 	float Health;
 	void AddModules();
 	int ModuleCount;
-	const int MaxModules = 24;
+	int MaxModules = 24;
 	TArray<FVector> ModulePositions;
 
 public:	
@@ -36,10 +36,14 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDestroyEvent();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UStaticMeshComponent* CollisionComponent;
+	UStaticMeshComponent* CollisionComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<TSubclassOf<class AEnemyModule>> ModuleList;
+	TArray<TSubclassOf<class AEnemyModule>> ModuleList;
 
 	int GetModuleCount() const { return ModuleCount; }
 	void IncrementModuleCount() { ModuleCount++; }
