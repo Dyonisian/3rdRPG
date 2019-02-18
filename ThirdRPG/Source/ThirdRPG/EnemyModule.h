@@ -34,7 +34,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	const float MaxHealth = 200.0f;
+	const float MaxHealth = 100.0f;
 	float Health;
 
 	bool IsModuleActive;
