@@ -5,6 +5,8 @@ Third person shooter prototype inspired by Horizon Zero Dawn prototypes and fina
 Warning - Project repository is missing two folders - StarterContent, and ParagonLtBelica to reduce size
 Both are free assets. Get them in the Epic marketplace, import them into an empty project, and then copy-paste into the content folder of this project for the project to work properly
 
+Video - https://www.youtube.com/watch?v=1jPKupeApDo&feature=youtu.be
+
 
 ## Features
 
