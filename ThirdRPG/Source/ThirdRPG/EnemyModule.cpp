@@ -79,12 +79,14 @@ void AEnemyModule::Tick(float DeltaTime)
 		case EModuleTypes::S_Gun: StateTimer = GunCooldown;
 			GunBurstCount++;
 			if (GunBurstCount >= 3)
+			{
 				StateTimer = GunCooldown * 3;
+				GunBurstCount = 0;
+			}
 			ActionFire();
 			break;
 		}
-	}
-	
+	}	
 }
 
 void AEnemyModule::AddModules()

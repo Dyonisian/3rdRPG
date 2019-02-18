@@ -19,8 +19,8 @@ AThirdRPGCharacter::AThirdRPGCharacter()
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	//GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AThirdRPGCharacter::OnOverlap);
-	//GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AThirdRPGCharacter::OnEndOverlap);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AThirdRPGCharacter::OnOverlap);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AThirdRPGCharacter::OnEndOverlap);
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
@@ -55,13 +55,10 @@ AThirdRPGCharacter::AThirdRPGCharacter()
 }
 void AThirdRPGCharacter::OnOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Ouch"));
-
 	if ((OtherActor != nullptr) && (OtherActor != this) && OtherComp)
 	{
 		if (OtherActor->ActorHasTag(TEXT("GunProjectile")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Ouch"));
 			Health -= 10;
 			if (Health <= 0)
 			{
@@ -86,8 +83,6 @@ void AThirdRPGCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (IsCameraLerping)
 	{
-		//SetActorRotation(FollowCamera->GetComponentRotation());
-		
 		CameraLerpTime += GetWorld()->GetDeltaSeconds() * CameraLerpRate;
 		LerpCamera();
 	}
@@ -101,9 +96,7 @@ void AThirdRPGCharacter::Tick(float DeltaTime)
 void AThirdRPGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	PrimaryActorTick.bCanEverTick = true;
-
-	
+	PrimaryActorTick.bCanEverTick = true;	
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -232,9 +225,7 @@ void AThirdRPGCharacter::ActionFire()
 			auto RotateDirection = Dest - startPos;
 			RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
 			FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
-			//UE_LOG(LogTemp, Warning, TEXT("Rat - Newrot is %s and old rot is %s"),*newrot.ToString(), *ControlledPawn->GetActorRotation().ToString());
-			//newrot.Roll = ControlledCharacter->GetActorRotation().Roll;
-
+			
 			GetWorld()->SpawnActor<AActor>(MyProjectile, startPos, newrot, spawnParams);
 		}
 	}

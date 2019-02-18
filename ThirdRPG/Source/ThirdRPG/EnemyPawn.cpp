@@ -85,6 +85,7 @@ void AEnemyPawn::AddModules()
 		auto RotateDirection = Dest - startPos;
 		RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
 		FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
+		
 		//Larger chance for ModuleHolder parts to allow for large enemies
 		auto moduleNo = FMath::RandRange(0, 7);
 		if (moduleNo > 4)
