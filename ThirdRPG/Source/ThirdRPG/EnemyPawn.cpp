@@ -18,6 +18,8 @@ AEnemyPawn::AEnemyPawn()
 	ModulePositions.Push(FVector(0, -1, 0));
 	ModulePositions.Push(FVector(0, 1, 0));
 	ModulePositions.Push(FVector(0, 0, 1));
+	FlashTimer = 0.0f;
+	IsFlashing = false;
 
 }
 
@@ -108,7 +110,15 @@ void AEnemyPawn::AddModules()
 void AEnemyPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	DrawDebugLine(GetWorld(), GetActorLocation() + ModulePositions[1] * 170 , GetActorLocation() + ModulePositions[1] * 250, FColor::Blue, true);
+	//DrawDebugLine(GetWorld(), GetActorLocation() + ModulePositions[1] * 170 , GetActorLocation() + ModulePositions[1] * 250, FColor::Blue, true);
+	FlashTimer -= GetWorld()->GetDeltaSeconds();
+	if (FlashTimer <= 0.0f && IsFlashing)
+	{
+		ResetMaterial();
+		IsFlashing = false;
+		FlashTimer = 0.0f;
+	}
+
 }
 
 // Called to bind functionality to input
@@ -124,15 +134,20 @@ void AEnemyPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		if (OtherActor->ActorHasTag(TEXT("CharProjectile")))
 		{
 			Health -= 10;
+			FlashTimer = FlashCooldown;
+			IsFlashing = true;
+			FlashRed();
 			if (Health <= 0)
 			{
 				OnDestroyEvent();
 				OtherActor->Destroy();
 			}
 		}
-		if (OtherActor->ActorHasTag(TEXT("Explosion")))
+		if (OtherActor->ActorHasTag(TEXT("CharExplosion")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Explosion damage!"));
+			FlashTimer = FlashCooldown;
+			IsFlashing = true;
+			FlashRed();
 			Health -= 50;
 			if (Health <= 0)
 			{

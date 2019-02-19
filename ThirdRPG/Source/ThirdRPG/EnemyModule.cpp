@@ -150,11 +150,6 @@ void AEnemyModule::ActionFire()
 		return;
 
 	FVector startPos = GetActorLocation() + GetActorForwardVector() * 100;
-	
-	
-	
-	DrawDebugLine(GetWorld(), startPos, endPos, FColor::Red, true);
-	
 	FActorSpawnParameters spawnParams;
 	spawnParams.Owner = this;
 
@@ -176,12 +171,13 @@ void AEnemyModule::ActionFire()
 void AEnemyModule::OnZeroHealth()
 {
 	IsModuleActive = false;
-	FDetachmentTransformRules detachRules(EDetachmentRule::KeepRelative, false);
-	DetachFromActor(detachRules);
+	
 	FindComponentByClass<UStaticMeshComponent>()->SetSimulatePhysics(true);
 	if (ModuleType == EModuleTypes::S_Weak)
 		OnDestroyEvent();
 	GetWorldTimerManager().SetTimer(DestroyTimerHandle, this, &AEnemyModule::DestroySelf, 5.0f, false);
+	FDetachmentTransformRules detachRules(EDetachmentRule::KeepRelative, false);
+	DetachFromActor(detachRules);
 }
 
 void AEnemyModule::DestroySelf()

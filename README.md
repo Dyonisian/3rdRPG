@@ -20,7 +20,7 @@ Character (ThirdRPGCharacter) -
 	
 Enemy - 
 -Modular/procedural enemy. Starts with a core block. The final "assembled" enemy varies in shape and size.
-Core block (EnemyPawn) spawns pieces and attaches them to its faces.
+Core block (EnemyPawn) spawns pieces and attaches them to its faces. If the core is destroyed, the whole robot goes down.
 
 - Modules (EnemyModule) - 
 	- Holder (grey) - Spawns and attaches more modules
@@ -29,6 +29,6 @@ Core block (EnemyPawn) spawns pieces and attaches them to its faces.
 	- Weapon (red) - Machine gun - Fast, weak projectiles
 	- Weapon (red) - Missiles - Big, slow projectiles that explode and can blow up cover/obstacles
 	
-- AI - AI controller (EnemyAIController) that lets the enemy patrol or seek the player (Non-functional)
+- AI - AI controller (EnemyAIController) that lets the enemy patrol or seek the player
 - Health - each piece has its own health.
 	

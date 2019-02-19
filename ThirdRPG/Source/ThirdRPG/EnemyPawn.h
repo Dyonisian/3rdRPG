@@ -27,6 +27,9 @@ protected:
 	//Health
 	const float MaxHealth = 200.0f;
 	float Health;
+	float FlashTimer;
+	bool IsFlashing;
+	const float FlashCooldown = 0.1f;
 
 	//Modules
 	void AddModules();
@@ -48,6 +51,12 @@ public:
 	UStaticMeshComponent* CollisionComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class AEnemyModule>> ModuleList;
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void FlashRed();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void ResetMaterial();
 
 	int GetModuleCount() const { return ModuleCount; }
 	void IncrementModuleCount() { ModuleCount++; }

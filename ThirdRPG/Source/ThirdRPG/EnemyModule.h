@@ -66,7 +66,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AActor> MissileProjectile;
 
-
+	UPROPERTY(BlueprintReadWrite)
 	AEnemyPawn* OwnerPawn;
 
 
