@@ -77,10 +77,16 @@ protected:
 	FVector CameraTargetOffset, CameraStartOffset;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AActor> MyProjectile;
+	UPROPERTY(BlueprintReadOnly)
 	bool IsFiring;
 	void ToggleIsFiring();
 	const float FireCooldown = 0.2f;
 	float FireTime;
+
+	//Place trap
+	void ActionPlaceTrap();
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AActor> MyTrap;
 	
 	//Dodge
 	void ActionDodge();

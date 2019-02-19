@@ -154,6 +154,18 @@ void AEnemyPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 				OnDestroyEvent();
 			}
 		}
+		if (OtherActor->ActorHasTag(TEXT("TrapExplosionChar")))
+		{
+			FlashTimer = FlashCooldown;
+			IsFlashing = true;
+			FlashRed();
+			Health -= 50;
+			if (Health <= 0)
+			{
+				OnDestroyEvent();
+			}
+			LaunchPawn(GetActorLocation() - OtherActor->GetActorLocation() * 1000,false,false);
+		}
 	}
 }
 void AEnemyPawn::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)

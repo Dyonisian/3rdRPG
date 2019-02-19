@@ -214,6 +214,17 @@ void AEnemyModule::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 				OnZeroHealth();
 			}
 		}
+		if (OtherActor->ActorHasTag(TEXT("TrapExplosionChar")))
+		{
+			FlashTimer = FlashCooldown;
+			IsFlashing = true;
+			FlashRed();
+			Health -= 50;
+			if (Health <= 0)
+			{
+				OnDestroyEvent();
+			}
+		}
 	}
 }
 void AEnemyModule::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)

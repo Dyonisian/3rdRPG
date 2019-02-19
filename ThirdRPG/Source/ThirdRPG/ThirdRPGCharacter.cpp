@@ -113,6 +113,8 @@ void AThirdRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("Dodge", IE_Pressed, this, &AThirdRPGCharacter::ActionDodge);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AThirdRPGCharacter::ToggleIsFiring);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AThirdRPGCharacter::ToggleIsFiring);
+	PlayerInputComponent->BindAction("Trap", IE_Pressed, this, &AThirdRPGCharacter::ActionPlaceTrap);
+
 
 
 
@@ -221,10 +223,10 @@ void AThirdRPGCharacter::ActionFire()
 			//UE_LOG(LogTemp, Warning, TEXT("Hit %s"),*outHit.GetActor()->GetName());
 			FActorSpawnParameters spawnParams;
 			spawnParams.Owner = this;
-			auto Dest = outHit.Location;
-			auto RotateDirection = Dest - startPos;
-			RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
-			FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
+			auto dest = outHit.Location;
+			auto rotateDirection = dest - startPos;
+			rotateDirection = FVector(rotateDirection.X, rotateDirection.Y, rotateDirection.Z);
+			FRotator newrot = FRotationMatrix::MakeFromX(rotateDirection).Rotator();
 			
 			GetWorld()->SpawnActor<AActor>(MyProjectile, startPos, newrot, spawnParams);
 		}
@@ -233,6 +235,13 @@ void AThirdRPGCharacter::ActionFire()
 void AThirdRPGCharacter::ToggleIsFiring()
 {
 	IsFiring = !IsFiring;
+}
+void AThirdRPGCharacter::ActionPlaceTrap()
+{
+	FActorSpawnParameters spawnParams;
+	spawnParams.Owner = this;
+	auto dest = GetActorLocation()+ GetActorForwardVector() * 400;
+	GetWorld()->SpawnActor<AActor>(MyTrap, dest, GetActorRotation(), spawnParams);
 }
 void AThirdRPGCharacter::ResetActionDodge()
 {
