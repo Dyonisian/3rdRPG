@@ -5,7 +5,8 @@ Third person shooter prototype inspired by Horizon Zero Dawn prototypes and fina
 Warning - Project repository is missing two folders - StarterContent, and ParagonLtBelica to reduce size
 Both are free assets. Get them in the Epic marketplace, import them into an empty project, and then copy-paste into the content folder of this project for the project to work properly
 
-Video - https://www.youtube.com/watch?v=1jPKupeApDo&feature=youtu.be
+## Video - 
+[![Horizon Inspired Prototype Divij Sood](https://img.youtube.com/vi/3hIgYaVVGgs/0.jpg)](https://www.youtube.com/watch?v=3hIgYaVVGgs)
 
 
 ## Features
@@ -24,7 +25,7 @@ Enemy -
 AI controller allows the enemy to patrol or seek the player. The player needs to be close enough for the AI to detect it.
 Core block (EnemyPawn) spawns pieces and attaches them to its faces. If the core is destroyed, the whole robot goes down.
 
-- Modules (EnemyModule) - 
+- Modules (EnemyModule) - Each module has its own function. They are attached to the pawn and fall off when destroyed.
 	- Holder (grey) - Spawns and attaches more modules
 	- Armour (black) - Protects the core
 	- Weak spot (yellow) - Has low HP and may explode when destroyed, damaging modules near it
