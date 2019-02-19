@@ -89,6 +89,13 @@ void AEnemyModule::Tick(float DeltaTime)
 	}	
 }
 
+void AEnemyModule::SetHealthToZero()
+{
+	Health = 0;
+	FlashRed();
+	OnZeroHealth();
+}
+
 void AEnemyModule::AddModules()
 {
 	//Check list
@@ -137,10 +144,14 @@ void AEnemyModule::AddModules()
 
 void AEnemyModule::ActionFire()
 {
-	FVector startPos = GetActorLocation() + GetActorForwardVector() * 100;
 	FVector endPos;
-	
 	endPos = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+	if (FVector::DistSquared(GetActorLocation(), endPos) > AttackRange * AttackRange)
+		return;
+
+	FVector startPos = GetActorLocation() + GetActorForwardVector() * 100;
+	
+	
 	
 	DrawDebugLine(GetWorld(), startPos, endPos, FColor::Red, true);
 	
@@ -198,7 +209,7 @@ void AEnemyModule::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 			}
 			OtherActor->Destroy();
 		}
-		if (OtherActor->ActorHasTag(TEXT("Explosion")))
+		if (OtherActor->ActorHasTag(TEXT("CharExplosion")))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Explosion damage!"));
 			Health -= 100;

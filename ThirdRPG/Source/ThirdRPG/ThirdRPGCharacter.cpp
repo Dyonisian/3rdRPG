@@ -62,7 +62,7 @@ void AThirdRPGCharacter::OnOverlap(UPrimitiveComponent * OverlappedComponent, AA
 			Health -= 10;
 			if (Health <= 0)
 			{
-				Destroy();
+				//Destroy();
 			}
 		}
 		if (OtherActor->ActorHasTag(TEXT("Explosion")))
@@ -70,7 +70,7 @@ void AThirdRPGCharacter::OnOverlap(UPrimitiveComponent * OverlappedComponent, AA
 			Health -= 30;
 			if (Health <= 0)
 			{				
-				Destroy();
+				//Destroy();
 			}
 		}
 	}

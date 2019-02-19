@@ -35,29 +35,57 @@ void AEnemyAIController::BeginPlay()
 	Super::BeginPlay();
 	AIState = EAIStates::S_Idle;
 	StateCooldownTimer = StateCooldown;
-	ControlledCharacter = Cast<AEnemyPawn>(GetPawn());
-	if (!ControlledCharacter)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AI - Controlled pawn not found"));
-	}
-	PlayerPawn = Cast<APawn>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (!PlayerPawn)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player - Controlled pawn not found"));
-	}
+	GetPlayerAndPawn();
 }
 
 void AEnemyAIController::Patrol()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Trying to Patrol"));
 
 	FNavLocation loc;
+	if (!ControlledCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Trying to Patrol, controlled character not found"));
+		bool result = GetPlayerAndPawn();
+		if (!result)
+			return;
+	}
 	auto dest = UNavigationSystemV1::GetRandomReachablePointInRadius(ControlledCharacter, ControlledCharacter->GetActorLocation(), 10000);
 	MoveToLocation(dest);
 }
 
 void AEnemyAIController::Attack()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Trying to attack"));
-	MoveToActor(PlayerPawn);
+	if (!ControlledCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Trying to attack, controlled character not found"));
+		bool result = GetPlayerAndPawn();
+		if (!result)
+			return;
+	}	
+	if (FVector::DistSquared(ControlledCharacter->GetActorLocation(), PlayerPawn->GetActorLocation()) <= AttackRange * AttackRange)
+	{
+		MoveToActor(PlayerPawn);
+	}
+	else
+	{
+		Patrol();
+	}
+}
+
+bool AEnemyAIController::GetPlayerAndPawn()
+{
+	bool result = true;
+	ControlledCharacter = Cast<AEnemyPawn>(GetPawn());
+	if (!ControlledCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AI - Controlled pawn not found"));
+		result = false;
+	}
+	PlayerPawn = Cast<APawn>(GetWorld()->GetFirstPlayerController()->GetPawn());
+	if (!PlayerPawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player - Controlled pawn not found"));
+		result = false;
+	}
+	return result;
 }

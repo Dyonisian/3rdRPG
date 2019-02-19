@@ -63,9 +63,9 @@ void AEnemyPawn::AddModules()
 		if (pos == FVector(0, 0, -1))
 			continue;
 
-		FVector startPos = GetActorLocation() + pos * 170;
+		FVector startPos = GetActorLocation() + FVector::UpVector * 500 + pos * 170;
 		FVector endPos;		
-		endPos = GetActorLocation() + pos * 250;		
+		endPos = GetActorLocation() + FVector::UpVector * 500 + pos * 250;
 		FHitResult outHit;
 		FCollisionQueryParams collisionParams;
 
@@ -85,7 +85,6 @@ void AEnemyPawn::AddModules()
 		auto RotateDirection = Dest - startPos;
 		RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
 		FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
-		
 		//Larger chance for ModuleHolder parts to allow for large enemies
 		auto moduleNo = FMath::RandRange(0, 7);
 		if (moduleNo > 4)
@@ -129,7 +128,6 @@ void AEnemyPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 			{
 				OnDestroyEvent();
 				OtherActor->Destroy();
-				Destroy();
 			}
 		}
 		if (OtherActor->ActorHasTag(TEXT("Explosion")))
@@ -139,7 +137,6 @@ void AEnemyPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 			if (Health <= 0)
 			{
 				OnDestroyEvent();
-				Destroy();
 			}
 		}
 	}

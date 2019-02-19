@@ -35,6 +35,11 @@ protected:
 	void Patrol();
 	void Attack();
 
+	bool GetPlayerAndPawn();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackRange = 4000.0f;
+
 public:
 	EAIStates AIState;
 
