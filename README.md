@@ -6,7 +6,7 @@ Warning - Project repository is missing two folders - StarterContent, and Parago
 Both are free assets. Get them in the Epic marketplace, import them into an empty project, and then copy-paste into the content folder of this project for the project to work properly
 
 ## Video - 
-[![Horizon Inspired Prototype Divij Sood](https://img.youtube.com/vi/3hIgYaVVGgs/0.jpg)](https://www.youtube.com/watch?v=3hIgYaVVGgs)
+[![Horizon Inspired Prototype Divij Sood](https://img.youtube.com/vi/nXW-zprmPlw/0.jpg)](https://www.youtube.com/watch?v=nXW-zprmPlw)
 
 
 ## Features
