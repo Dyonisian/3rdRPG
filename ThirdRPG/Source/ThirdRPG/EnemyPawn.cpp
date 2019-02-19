@@ -83,10 +83,10 @@ void AEnemyPawn::AddModules()
 		}
 		FActorSpawnParameters spawnParams;
 		spawnParams.Owner = this;
-		auto Dest = endPos;
-		auto RotateDirection = Dest - startPos;
-		RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
-		FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
+		auto dest = endPos;
+		auto rotateDirection = dest - startPos;
+		rotateDirection = FVector(rotateDirection.X, rotateDirection.Y, rotateDirection.Z);
+		FRotator newrot = FRotationMatrix::MakeFromX(rotateDirection).Rotator();
 		//Larger chance for ModuleHolder parts to allow for large enemies
 		auto moduleNo = FMath::RandRange(0, 7);
 		if (moduleNo > 4)
@@ -163,8 +163,7 @@ void AEnemyPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 			if (Health <= 0)
 			{
 				OnDestroyEvent();
-			}
-			LaunchPawn(GetActorLocation() - OtherActor->GetActorLocation() * 1000,false,false);
+			}			
 		}
 	}
 }

@@ -29,7 +29,7 @@ protected:
 	AEnemyPawn* ControlledCharacter;
 	APawn* PlayerPawn;
 
-	float StateCooldownTimer;
+	float StateTimer;
 	const float StateCooldown = 5.0f;
 
 	void Patrol();

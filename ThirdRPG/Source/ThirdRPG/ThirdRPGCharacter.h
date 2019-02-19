@@ -81,18 +81,20 @@ protected:
 	bool IsFiring;
 	void ToggleIsFiring();
 	const float FireCooldown = 0.2f;
-	float FireTime;
+	float FireTimer;
 
 	//Place trap
 	void ActionPlaceTrap();
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class AActor> MyTrap;
+	TSubclassOf<class AActor> MyTrap;
+	const float TrapCooldown = 3.0f;
+	float TrapTimer;
 	
 	//Dodge
 	void ActionDodge();
 	void ResetActionDodge();
 	FTimerHandle DodgeTimerHandle;
-	const float DodgeTime = 0.2f;
+	const float DodgeCooldown = 0.2f;
 	bool IsDodge;
 
 	//Health

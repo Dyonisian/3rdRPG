@@ -122,10 +122,10 @@ void AEnemyModule::AddModules()
 		}
 		FActorSpawnParameters spawnParams;
 		spawnParams.Owner = this;
-		auto Dest = endPos;
-		auto RotateDirection = Dest - startPos;
-		RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
-		FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
+		auto dest = endPos;
+		auto rotateDirection = dest - startPos;
+		rotateDirection = FVector(rotateDirection.X, rotateDirection.Y, rotateDirection.Z);
+		FRotator newrot = FRotationMatrix::MakeFromX(rotateDirection).Rotator();
 		auto moduleNo = FMath::RandRange(0, 4);		
 		auto module = ModuleList[moduleNo];
 
@@ -154,10 +154,10 @@ void AEnemyModule::ActionFire()
 	spawnParams.Owner = this;
 
 	//Set rotation to face target
-	auto Dest = endPos;
-	auto RotateDirection = Dest - startPos;
-	RotateDirection = FVector(RotateDirection.X, RotateDirection.Y, RotateDirection.Z);
-	FRotator newrot = FRotationMatrix::MakeFromX(RotateDirection).Rotator();
+	auto dest = endPos;
+	auto rotateDirection = dest - startPos;
+	rotateDirection = FVector(rotateDirection.X, rotateDirection.Y, rotateDirection.Z);
+	FRotator newrot = FRotationMatrix::MakeFromX(rotateDirection).Rotator();
 	
 	TSubclassOf<AActor> projectile;
 	if (ModuleType == EModuleTypes::S_Gun)

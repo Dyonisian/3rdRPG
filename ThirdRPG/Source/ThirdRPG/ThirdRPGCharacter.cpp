@@ -49,7 +49,7 @@ AThirdRPGCharacter::AThirdRPGCharacter()
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	IsCameraLerping = IsDodge= IsAiming = IsFiring = false;
-	CameraLerpTime = FireTime = 0.0f;
+	CameraLerpTime = FireTimer = TrapTimer = 0.0f;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -86,10 +86,11 @@ void AThirdRPGCharacter::Tick(float DeltaTime)
 		CameraLerpTime += GetWorld()->GetDeltaSeconds() * CameraLerpRate;
 		LerpCamera();
 	}
-	FireTime -= GetWorld()->GetDeltaSeconds();
-	if (IsFiring && FireTime<=0.0f)
+	FireTimer -= GetWorld()->GetDeltaSeconds();
+	TrapTimer -= GetWorld()->GetDeltaSeconds();
+	if (IsFiring && FireTimer<=0.0f)
 	{
-		FireTime = FireCooldown;
+		FireTimer = FireCooldown;
 		ActionFire();
 	}
 }
@@ -197,7 +198,7 @@ void AThirdRPGCharacter::ActionDodge()
 		IsDodge = true;
 
 		LaunchCharacter(FVector(0, 0, 1) * 250 + GetVelocity(), false, false);
-		GetWorldTimerManager().SetTimer(DodgeTimerHandle, this, &AThirdRPGCharacter::ResetActionDodge, DodgeTime, false);
+		GetWorldTimerManager().SetTimer(DodgeTimerHandle, this, &AThirdRPGCharacter::ResetActionDodge, DodgeCooldown, false);
 	}
 }
 void AThirdRPGCharacter::ActionFire()
@@ -238,9 +239,12 @@ void AThirdRPGCharacter::ToggleIsFiring()
 }
 void AThirdRPGCharacter::ActionPlaceTrap()
 {
+	if (TrapTimer > 0)
+		return;
+	TrapTimer = TrapCooldown;
 	FActorSpawnParameters spawnParams;
 	spawnParams.Owner = this;
-	auto dest = GetActorLocation()+ GetActorForwardVector() * 400;
+	auto dest = GetActorLocation()+ GetActorForwardVector() * 100 + FVector::UpVector * 50;
 	GetWorld()->SpawnActor<AActor>(MyTrap, dest, GetActorRotation(), spawnParams);
 }
 void AThirdRPGCharacter::ResetActionDodge()

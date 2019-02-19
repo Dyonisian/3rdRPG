@@ -10,10 +10,10 @@
 void AEnemyAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	StateCooldownTimer -= GetWorld()->GetDeltaSeconds();
-	if (StateCooldownTimer <= 0.0f)
+	StateTimer -= GetWorld()->GetDeltaSeconds();
+	if (StateTimer <= 0.0f)
 	{
-		StateCooldownTimer = StateCooldown;
+		StateTimer = StateCooldown;
 		AIState = static_cast<EAIStates>(FMath::RandRange(0, 3));
 		switch (AIState)
 		{
@@ -34,7 +34,7 @@ void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
 	AIState = EAIStates::S_Idle;
-	StateCooldownTimer = StateCooldown;
+	StateTimer = StateCooldown;
 	GetPlayerAndPawn();
 }
 
