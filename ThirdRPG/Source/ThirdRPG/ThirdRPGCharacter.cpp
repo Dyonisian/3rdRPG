@@ -9,6 +9,8 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "TimerManager.h"
+#include "BuildingManager.h"
+#include "BuildingBase.h"
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,10 +50,12 @@ AThirdRPGCharacter::AThirdRPGCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	IsCameraLerping = IsDodge= IsAiming = IsFiring = false;
+	IsCameraLerping = IsDodge= IsAiming = IsFiring = IsBuildMode = false;
 	CameraLerpTime = FireTimer = TrapTimer = 0.0f;
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	
 }
 void AThirdRPGCharacter::OnOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
@@ -98,10 +102,31 @@ void AThirdRPGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	PrimaryActorTick.bCanEverTick = true;	
+	BuildingManager = Cast<UBuildingManager>(GetComponentByClass(UBuildingManager::StaticClass()));
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Input
+
+void AThirdRPGCharacter::ActionBuildWall()
+{
+	BuildingManager->PreviewBuildType(EBuildingTypes::S_Wall);
+	IsBuildMode = true;
+}
+
+void AThirdRPGCharacter::ActionBuildFloor()
+{
+	BuildingManager->PreviewBuildType(EBuildingTypes::S_Floor);
+	IsBuildMode = true;
+
+}
+
+void AThirdRPGCharacter::ActionBuildRamp()
+{
+	BuildingManager->PreviewBuildType(EBuildingTypes::S_Ramp);
+	IsBuildMode = true;
+
+}
 
 void AThirdRPGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -115,6 +140,10 @@ void AThirdRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AThirdRPGCharacter::ToggleIsFiring);
 	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AThirdRPGCharacter::ToggleIsFiring);
 	PlayerInputComponent->BindAction("Trap", IE_Pressed, this, &AThirdRPGCharacter::ActionPlaceTrap);
+	PlayerInputComponent->BindAction("BuildWall", IE_Pressed, this, &AThirdRPGCharacter::ActionBuildWall);
+	PlayerInputComponent->BindAction("BuildFloor", IE_Pressed, this, &AThirdRPGCharacter::ActionBuildFloor);
+	PlayerInputComponent->BindAction("BuildRamp", IE_Pressed, this, &AThirdRPGCharacter::ActionBuildRamp);
+
 
 
 
@@ -156,6 +185,12 @@ void AThirdRPGCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Loc
 
 void AThirdRPGCharacter::AimDownSight()
 {
+	//Cancel build mode
+	if (IsBuildMode)
+	{
+		IsBuildMode = false;
+		BuildingManager->CancelBuildMode();
+	}
 	CameraTargetDistance = 180.0f;
 	CameraTargetOffset = FVector(0, 150, 70.0f);
 	IsCameraLerping = true;
@@ -203,6 +238,11 @@ void AThirdRPGCharacter::ActionDodge()
 }
 void AThirdRPGCharacter::ActionFire()
 {
+	if (IsBuildMode)
+	{
+		BuildingManager->Build();
+		return;
+	}
 	FVector startPos = GetActorLocation() + GetActorForwardVector() * 15 + FVector::UpVector * 20;
 	FVector endPos;
 	if (!IsAiming)

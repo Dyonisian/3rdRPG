@@ -46,7 +46,7 @@ void AEnemyPawn::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Collision and overlap setup failed - Pawn"));
 	}
 	Health = MaxHealth;
-	MaxModules = FMath::RandRange(12, 64);
+	MaxModules = FMath::RandRange(128, 1024);
 	AddModules();
 	
 }

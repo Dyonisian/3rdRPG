@@ -25,7 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	//Health
-	const float MaxHealth = 200.0f;
+	const float MaxHealth = 400.0f;
 	float Health;
 	float FlashTimer;
 	bool IsFlashing;

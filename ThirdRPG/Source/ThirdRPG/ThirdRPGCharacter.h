@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "ThirdRPGCharacter.generated.h"
 
+enum class EBuildingTypes : uint8;
+class UBuildingManager;
 UCLASS(config=Game)
 class AThirdRPGCharacter : public ACharacter
 {
@@ -99,6 +101,13 @@ protected:
 
 	//Health
 	const float MaxHealth = 200.0f;
+
+	UBuildingManager* BuildingManager;
+	void ActionBuildWall();
+	void ActionBuildFloor();
+	void ActionBuildRamp();
+	bool IsBuildMode;
+
 
 
 protected:
