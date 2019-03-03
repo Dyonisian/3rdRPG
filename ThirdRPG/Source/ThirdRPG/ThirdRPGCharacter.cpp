@@ -64,10 +64,15 @@ void AThirdRPGCharacter::OnOverlap(UPrimitiveComponent * OverlappedComponent, AA
 		if (OtherActor->ActorHasTag(TEXT("GunProjectile")))
 		{
 			Health -= 10;
+			OtherActor->Destroy();
 			if (Health <= 0)
 			{
 				//Destroy();
 			}
+		}
+		if (OtherActor->ActorHasTag(TEXT("MissileProjectile")))
+		{
+			//Destroy(OtherActor);
 		}
 		if (OtherActor->ActorHasTag(TEXT("Explosion")))
 		{

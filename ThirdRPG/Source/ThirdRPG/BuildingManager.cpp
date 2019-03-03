@@ -106,8 +106,10 @@ void UBuildingManager::Build()
 	{
 		FActorSpawnParameters spawnParams;
 		spawnParams.Owner = GetOwner();
-		FVector startPos = ToGridLocation(GetPlayerLookAtLocation(400.0f));
-		FRotator startRot = FRotator(0, ToGridRotation(PlayerCharacter->GetFollowCamera()->GetComponentRotation().Yaw + 90), 0);
+		//FVector startPos = ToGridLocation(GetPlayerLookAtLocation(400.0f));
+		//FRotator startRot = FRotator(0, ToGridRotation(PlayerCharacter->GetFollowCamera()->GetComponentRotation().Yaw + 90), 0);
+		FVector startPos = CurrentBuildPreview->GetActorLocation();
+		FRotator startRot = CurrentBuildPreview->GetActorRotation();
 		if (BuildList[(int)BuildType])
 		{
 			GetWorld()->SpawnActor<ABuildingBase>(BuildList[(int)BuildType], startPos, startRot, spawnParams);
