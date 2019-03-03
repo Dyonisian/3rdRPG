@@ -56,6 +56,9 @@ protected:
 	float AttackRange = 3000.0f;
 	bool IsFlashing;
 	int GunBurstCount = 0;
+	FVector CurrentAimPoint;
+	FVector TargetAimPoint;
+	void InterpAimTarget(float deltaTime);
 
 	float StateTimer;
 	float FlashTimer;

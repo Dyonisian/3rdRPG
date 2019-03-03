@@ -46,12 +46,17 @@ void AEnemyModule::BeginPlay()
 	}
 	FlashTimer = 0.0f;
 	IsFlashing = false;
+	CurrentAimPoint = TargetAimPoint = GetActorLocation() + GetActorForwardVector() * 400;
 }
 // Called every frame
 void AEnemyModule::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	FlashTimer -= GetWorld()->GetDeltaSeconds();
+	if ((ModuleType == EModuleTypes::S_Gun || ModuleType == EModuleTypes::S_Missile) && FVector::DistSquared(GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()) < AttackRange * AttackRange)
+	{
+		InterpAimTarget(DeltaTime);
+	}
 	if (FlashTimer <= 0.0f && IsFlashing)
 	{
 		ResetMaterial();
@@ -149,6 +154,10 @@ void AEnemyModule::ActionFire()
 	if (FVector::DistSquared(GetActorLocation(), endPos) > AttackRange * AttackRange)
 		return;
 
+	auto normal = (endPos - GetActorLocation()).GetSafeNormal();
+	TargetAimPoint = GetActorLocation() + normal * 400;
+
+	endPos = CurrentAimPoint;
 	FVector startPos = GetActorLocation() + GetActorForwardVector() * 100;
 	FActorSpawnParameters spawnParams;
 	spawnParams.Owner = this;
@@ -229,5 +238,13 @@ void AEnemyModule::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 }
 void AEnemyModule::OnEndOverlap(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
+
+}
+void AEnemyModule::InterpAimTarget(float deltaTime)
+{
+	CurrentAimPoint = FMath::VInterpConstantTo(CurrentAimPoint, TargetAimPoint, deltaTime, 300.f);
+	DrawDebugLine(GetWorld(), GetActorLocation(), CurrentAimPoint, FColor::Purple, true);
+	UE_LOG(LogTemp, Warning, TEXT("Current aim is %s"), *CurrentAimPoint.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Target aim is %s"), *TargetAimPoint.ToString());
 
 }
