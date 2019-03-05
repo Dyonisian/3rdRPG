@@ -53,7 +53,7 @@ protected:
 	const float MissileCooldown = 3.0f;
 	const float FlashCooldown = 0.1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackRange = 3000.0f;
+	float AttackRange = 5000.0f;
 	bool IsFlashing;
 	int GunBurstCount = 0;
 	FVector CurrentAimPoint;

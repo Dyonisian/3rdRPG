@@ -53,7 +53,7 @@ void AEnemyModule::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	FlashTimer -= GetWorld()->GetDeltaSeconds();
-	if ((ModuleType == EModuleTypes::S_Gun || ModuleType == EModuleTypes::S_Missile) && FVector::DistSquared(GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()) < AttackRange * AttackRange)
+	if ((ModuleType == EModuleTypes::S_Gun || ModuleType == EModuleTypes::S_Missile) && FVector::DistSquared(GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()) < (AttackRange + GetActorLocation().Z) * (AttackRange + GetActorLocation().Z))
 	{
 		InterpAimTarget(DeltaTime);
 	}
@@ -151,7 +151,7 @@ void AEnemyModule::ActionFire()
 {
 	FVector endPos;
 	endPos = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-	if (FVector::DistSquared(GetActorLocation(), endPos) > AttackRange * AttackRange)
+	if (FVector::DistSquared(GetActorLocation(), endPos) > (AttackRange + GetActorLocation().Z) * (AttackRange + GetActorLocation().Z))
 		return;
 
 	auto normal = (endPos - GetActorLocation()).GetSafeNormal();
