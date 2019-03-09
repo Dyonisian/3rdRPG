@@ -4,7 +4,6 @@
 #include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
 #include "EnemyModule.h"
-#include "Runtime/Engine/Classes/PhysicsEngine/PhysicsHandleComponent.h"
 
 
 
@@ -19,16 +18,8 @@ AEnemyPawn::AEnemyPawn()
 	ModulePositions.Push(FVector(0, -1, 0));
 	ModulePositions.Push(FVector(0, 1, 0));
 	ModulePositions.Push(FVector(0, 0, 1));
-	FlashTimer = ExplosionImmunityTimer = 0.0f;
+	FlashTimer = 0.0f;
 	IsFlashing = false;
-	PhysicsHandleCount = 0;
-	//auto t = TEXT("Physics Handle");// +static_cast<TEXT>(PhysicsHandleCount);	
-	//SM1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Debug component"));
-	for (; PhysicsHandleCount < 6; )
-	{
-		PhysicsHandles.Add(CreateDefaultSubobject<UPhysicsHandleComponent>(*FString("Physics Handle" + FString::FromInt(PhysicsHandleCount++))));
-	}
-
 
 }
 
@@ -74,9 +65,9 @@ void AEnemyPawn::AddModules()
 		if (pos == FVector(0, 0, -1))
 			continue;
 
-		FVector startPos = GetActorLocation() + FVector::UpVector * 400 + pos * 300;
+		FVector startPos = GetActorLocation() + FVector::UpVector * 500 + pos * 170;
 		FVector endPos;		
-		endPos = GetActorLocation() + FVector::UpVector * 400 + pos * 380;
+		endPos = GetActorLocation() + FVector::UpVector * 500 + pos * 250;
 		FHitResult outHit;
 		FCollisionQueryParams collisionParams;
 
@@ -97,7 +88,7 @@ void AEnemyPawn::AddModules()
 		rotateDirection = FVector(rotateDirection.X, rotateDirection.Y, rotateDirection.Z);
 		FRotator newrot = FRotationMatrix::MakeFromX(rotateDirection).Rotator();
 		//Larger chance for ModuleHolder parts to allow for large enemies
-		auto moduleNo = 1;//FMath::RandRange(1, 4);
+		auto moduleNo = FMath::RandRange(0, 7);
 		if (moduleNo > 4)
 			moduleNo = 0;
 		auto module = ModuleList[moduleNo];
@@ -110,13 +101,6 @@ void AEnemyPawn::AddModules()
 		FAttachmentTransformRules attachRules(EAttachmentRule::KeepWorld,false);
 		spawnedModule->AttachToActor(this, attachRules);
 		spawnedModule->SetOwnerPawn(this);
-		//auto t = TEXT("Physics Handle %i" + PhysicsHandleCount);
-		//PhysicsHandles.Add(CreateDefaultSubobject<UPhysicsHandleComponent>(t));
-		auto moduleComp = spawnedModule->CollisionComponent; //Cast<UPrimitiveComponent>(spawnedModule->GetComponentByClass(UStaticMeshComponent::StaticClass()));
-		PhysicsHandles[i]->GrabComponent(moduleComp, TEXT(""),spawnPos,true);
-		//UE_LOG(LogTemp, Warning, TEXT("Got to this point"));
-		SpawnedModulePositions.Add(pos * 300);
-		SpawnedModuleRotators.Add(newrot - CollisionComponent->GetComponentRotation());
 		ModuleCount++;
 	}
 	
@@ -128,18 +112,11 @@ void AEnemyPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//DrawDebugLine(GetWorld(), GetActorLocation() + ModulePositions[1] * 170 , GetActorLocation() + ModulePositions[1] * 250, FColor::Blue, true);
 	FlashTimer -= GetWorld()->GetDeltaSeconds();
-	ExplosionImmunityTimer -= GetWorld()->GetDeltaSeconds();
-
 	if (FlashTimer <= 0.0f && IsFlashing)
 	{
 		ResetMaterial();
 		IsFlashing = false;
 		FlashTimer = 0.0f;
-	}
-	for (int i=0; i<PhysicsHandles.Num()-1;i++)
-	{
-		PhysicsHandles[i]->SetTargetLocation(CollisionComponent->GetComponentLocation() + SpawnedModulePositions[i]);
-		PhysicsHandles[i]->SetTargetRotation(CollisionComponent->GetComponentRotation() + SpawnedModuleRotators[i]);
 	}
 
 }
@@ -177,16 +154,11 @@ void AEnemyPawn::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 				OnDestroyEvent();
 			}
 		}
-		if (OtherActor->ActorHasTag(TEXT("TrapExplosionChar")) && ExplosionImmunityTimer<=0.0f)
+		if (OtherActor->ActorHasTag(TEXT("TrapExplosionChar")))
 		{
 			FlashTimer = FlashCooldown;
 			IsFlashing = true;
-			ExplosionImmunityTimer = ExplosionImmunityCooldown;
 			FlashRed();
-			CollisionComponent->SetSimulatePhysics(true);
-			CollisionComponent->SetEnableGravity(true);
-			auto imp = (GetActorLocation() - OtherActor->GetActorLocation()).GetSafeNormal();
-			CollisionComponent->AddImpulseAtLocation(imp * 5000000,GetActorLocation() + (OtherActor->GetActorLocation() - GetActorLocation())/2);
 			Health -= 50;
 			if (Health <= 0)
 			{

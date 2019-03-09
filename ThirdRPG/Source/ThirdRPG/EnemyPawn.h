@@ -7,7 +7,6 @@
 #include "EnemyModule.h"
 #include "EnemyPawn.generated.h"
 
-class UPhysicsHandleComponent;
 UCLASS()
 class THIRDRPG_API AEnemyPawn : public APawn
 {
@@ -31,22 +30,12 @@ protected:
 	float FlashTimer;
 	bool IsFlashing;
 	const float FlashCooldown = 0.1f;
-	float ExplosionImmunityTimer;
-	const float ExplosionImmunityCooldown = 3.0f;
 
 	//Modules
 	void AddModules();
 	int ModuleCount;
 	int MaxModules = 24;
 	TArray<FVector> ModulePositions;
-
-	//Handles
-	TArray<UPhysicsHandleComponent*> PhysicsHandles;
-	TArray<FVector> SpawnedModulePositions;
-	TArray<FRotator> SpawnedModuleRotators;
-	UPhysicsHandleComponent* Handle1;
-	//UStaticMeshComponent* SM1;
-	int PhysicsHandleCount;
 
 public:	
 	// Called every frame
