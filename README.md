@@ -37,7 +37,7 @@ Core block (EnemyPawn) spawns pieces and attaches them to its faces. If the core
 - AI - AI controller (EnemyAIController) that lets the enemy patrol or seek the player
 - Health - each piece has its own health.
 
-## Game feel (In-progress)
+## Game feel
 - Shooting - 
 	- Enemy modules flash red when hit	
 	- Particle effects on firing and on impact of bullets
