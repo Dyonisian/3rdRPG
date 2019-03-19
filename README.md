@@ -35,4 +35,19 @@ Core block (EnemyPawn) spawns pieces and attaches them to its faces. If the core
 	
 - AI - AI controller (EnemyAIController) that lets the enemy patrol or seek the player
 - Health - each piece has its own health.
+
+## Game feel (In-progress)
+- Shooting - 
+	- Enemy modules flash red when hit	
+	- Particle effects on firing and on impact of bullets
+- Explosions cause camera shakes based on size of explosion and distance from character
+- Modules become physical and drop/fly away when destroyed
+- Weak spots are present to make dismantling the enemies faster and more satisfying
 	
+## Planned improvements
+- Grid and noise based procedural generation (Partially implemented) 
+	- This will allow for more design and constraints to be applied to the procedural generation
+	- Generation can aim to generate humanoid or animalistic enemies of various sizes
+	- Different sub-parts with various functions can be generated to make the game more strategic
+- Art and animation 
+	- Better firing animations for better game feel
