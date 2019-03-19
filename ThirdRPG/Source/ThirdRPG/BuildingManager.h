@@ -36,6 +36,7 @@ protected:
 
 	float XGridSize, YGridSize, ZGridSize;
 	float RotSnap;
+	FVector OverridePreviewLocation;
 
 	AThirdRPGCharacter* PlayerCharacter;
 

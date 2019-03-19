@@ -72,7 +72,19 @@ void UBuildingManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	{
 		if (BuildType == EBuildingTypes::S_Edit)
 		{
-			CurrentBuildPreview->SetActorLocation(GetPlayerLookAtLocation(400.0f) + FVector::UpVector * 200);
+			FVector startPos = GetPlayerLookAtLocation(100) + FVector::UpVector * 200;//PlayerCharacter->GetFollowCamera()->GetComponentLocation() + PlayerCharacter->GetFollowCamera()->GetForwardVector() * 170;
+			FVector endPos = GetPlayerLookAtLocation(400) + FVector::UpVector * 200;
+			FHitResult outHit;
+			FCollisionQueryParams collisionParams;
+			//Check if space is already occupied by a build object
+			if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
+			{
+				CurrentBuildPreview->SetActorLocation(outHit.ImpactPoint);
+			}
+			else
+			{
+				CurrentBuildPreview->SetActorLocation(GetPlayerLookAtLocation(400.0f) + FVector::UpVector * 200);
+			}
 		}
 		else
 		{
@@ -126,7 +138,6 @@ void UBuildingManager::Build()
 				//Check if space is already occupied by a build object
 				if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
 				{
-					//UE_LOG(LogTemp, Warning, TEXT("Trying to edit - %s"),*outHit.GetActor()->GetName());
 					auto actor = outHit.GetActor();
 					if (outHit.bBlockingHit && actor->ActorHasTag("Build"))
 					{
@@ -134,7 +145,7 @@ void UBuildingManager::Build()
 						auto rot = actor->GetActorRotation();
 						//Check which half the hit is in 
 						auto diffPos = actor->GetTransform().InverseTransformPosition(endPos);//Convert to local space of the hit object (Build object)
-						UE_LOG(LogTemp, Warning, TEXT("Diff pos is %s"), *diffPos.ToString());
+						//UE_LOG(LogTemp, Warning, TEXT("Diff pos is %s"), *diffPos.ToString());
 						if (diffPos.X < 200)
 							rot.Yaw += 180;
 						if (diffPos.Z > 200)
