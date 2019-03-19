@@ -126,18 +126,22 @@ void UBuildingManager::Build()
 				//Check if space is already occupied by a build object
 				if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Trying to edit - %s"),*outHit.GetActor()->GetName());
+					//UE_LOG(LogTemp, Warning, TEXT("Trying to edit - %s"),*outHit.GetActor()->GetName());
 					auto actor = outHit.GetActor();
 					if (outHit.bBlockingHit && actor->ActorHasTag("Build"))
 					{
-						//UE_LOG(LogTemp, Warning, TEXT("Can't build, something's in the way"));
-
+						auto pos = actor->GetActorLocation();
+						auto rot = actor->GetActorRotation();
 						//Check which half the hit is in 
+						auto diffPos = actor->GetTransform().InverseTransformPosition(endPos);//Convert to local space of the hit object (Build object)
+						UE_LOG(LogTemp, Warning, TEXT("Diff pos is %s"), *diffPos.ToString());
+						if (diffPos.X < 200)
+							rot.Yaw += 180;
+						if (diffPos.Z > 200)
+							rot.Roll += 180;
 
 						//Replace mesh
-						auto pos = actor->GetActorLocation();
-						pos += actor->GetActorUpVector() * EditOffsetZ + actor->GetActorRightVector() * EditOffsetX + actor->GetActorForwardVector() * EditOffsetY;
-						auto rot = actor->GetActorRotation();
+						pos += actor->GetActorUpVector() * EditOffsetZ + actor->GetActorRightVector() * EditOffsetX + actor->GetActorForwardVector() * EditOffsetY;						
 						FActorSpawnParameters spawnParams;
 						spawnParams.Owner = GetOwner();
 						actor->Destroy();
