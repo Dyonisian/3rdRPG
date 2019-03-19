@@ -102,10 +102,12 @@ protected:
 	//Health
 	const float MaxHealth = 200.0f;
 
+	//Building
 	UBuildingManager* BuildingManager;
 	void ActionBuildWall();
 	void ActionBuildFloor();
 	void ActionBuildRamp();
+	void ActionBuildEdit();
 	bool IsBuildMode;
 
 

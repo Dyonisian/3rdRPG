@@ -5,6 +5,7 @@
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "BuildingBase.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values for this component's properties
@@ -69,8 +70,15 @@ void UBuildingManager::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (CurrentBuildPreview)
 	{
-		CurrentBuildPreview->SetActorLocation(ToGridLocation(GetPlayerLookAtLocation(400.0f)));
-		CurrentBuildPreview->SetActorRotation(FRotator(0, ToGridRotation(PlayerCharacter->GetFollowCamera()->GetComponentRotation().Yaw+90),0));
+		if (BuildType == EBuildingTypes::S_Edit)
+		{
+			CurrentBuildPreview->SetActorLocation(GetPlayerLookAtLocation(400.0f) + FVector::UpVector * 200);
+		}
+		else
+		{
+			CurrentBuildPreview->SetActorLocation(ToGridLocation(GetPlayerLookAtLocation(400.0f)));
+			CurrentBuildPreview->SetActorRotation(FRotator(0, ToGridRotation(PlayerCharacter->GetFollowCamera()->GetComponentRotation().Yaw + 90), 0));
+		}
 	}
 	// ...
 }
@@ -90,7 +98,7 @@ void UBuildingManager::PreviewBuildType(EBuildingTypes buildType)
 	FRotator startRot = FRotator(0,ToGridRotation(PlayerCharacter->GetFollowCamera()->GetComponentRotation().Yaw +90),0);
 	UE_LOG(LogTemp, Warning, TEXT("Rotator is %f %f %f"), startRot.Pitch, startRot.Roll, startRot.Yaw);
 
-	if (BuildPreviewList[(int)buildType])
+	if (BuildPreviewList.Num()>(int)BuildType)
 	{
 		CurrentBuildPreview = GetWorld()->SpawnActor<ABuildingBase>(BuildPreviewList[(int)buildType], startPos, startRot, spawnParams);		
 	}
@@ -103,16 +111,51 @@ void UBuildingManager::PreviewBuildType(EBuildingTypes buildType)
 void UBuildingManager::Build()
 {
 	if (CurrentBuildPreview)
-	{
-		FActorSpawnParameters spawnParams;
-		spawnParams.Owner = GetOwner();
-		//FVector startPos = ToGridLocation(GetPlayerLookAtLocation(400.0f));
-		//FRotator startRot = FRotator(0, ToGridRotation(PlayerCharacter->GetFollowCamera()->GetComponentRotation().Yaw + 90), 0);
-		FVector startPos = CurrentBuildPreview->GetActorLocation();
-		FRotator startRot = CurrentBuildPreview->GetActorRotation();
-		if (BuildList[(int)BuildType])
+	{		
+		if (BuildList.Num()>(int)BuildType)
 		{
-			GetWorld()->SpawnActor<ABuildingBase>(BuildList[(int)BuildType], startPos, startRot, spawnParams);
+			if (BuildType == EBuildingTypes::S_Edit)
+			{
+				FVector startPos = GetPlayerLookAtLocation(100) + FVector::UpVector * 200;//PlayerCharacter->GetFollowCamera()->GetComponentLocation() + PlayerCharacter->GetFollowCamera()->GetForwardVector() * 170;
+				FVector endPos = GetPlayerLookAtLocation(400) + FVector::UpVector * 200;
+				//endPos = startPos + PlayerCharacter->GetFollowCamera()->GetForwardVector() * 400;
+				FHitResult outHit;
+				FCollisionQueryParams collisionParams;
+
+				DrawDebugLine(GetWorld(), startPos, endPos, FColor::Blue, true);
+				//Check if space is already occupied by a build object
+				if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Trying to edit - %s"),*outHit.GetActor()->GetName());
+					auto actor = outHit.GetActor();
+					if (outHit.bBlockingHit && actor->ActorHasTag("Build"))
+					{
+						//UE_LOG(LogTemp, Warning, TEXT("Can't build, something's in the way"));
+
+						//Check which half the hit is in 
+
+						//Replace mesh
+						auto pos = actor->GetActorLocation();
+						pos += actor->GetActorUpVector() * EditOffsetZ + actor->GetActorRightVector() * EditOffsetX + actor->GetActorForwardVector() * EditOffsetY;
+						auto rot = actor->GetActorRotation();
+						FActorSpawnParameters spawnParams;
+						spawnParams.Owner = GetOwner();
+						actor->Destroy();
+						GetWorld()->SpawnActor<ABuildingBase>(BuildList[(int)BuildType], pos, rot, spawnParams);
+					}
+				}
+			}
+			//Normal build, not edit
+			else
+			{
+				FActorSpawnParameters spawnParams;
+				spawnParams.Owner = GetOwner();
+				//FVector startPos = ToGridLocation(GetPlayerLookAtLocation(400.0f));
+				//FRotator startRot = FRotator(0, ToGridRotation(PlayerCharacter->GetFollowCamera()->GetComponentRotation().Yaw + 90), 0);
+				FVector startPos = CurrentBuildPreview->GetActorLocation();
+				FRotator startRot = CurrentBuildPreview->GetActorRotation();
+				GetWorld()->SpawnActor<ABuildingBase>(BuildList[(int)BuildType], startPos, startRot, spawnParams);
+			}
 		}
 		else
 		{

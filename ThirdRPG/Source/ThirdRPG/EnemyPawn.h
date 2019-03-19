@@ -37,6 +37,11 @@ protected:
 	int MaxModules = 24;
 	TArray<FVector> ModulePositions;
 
+	//3D generation
+	TArray<TArray<TArray<int>>> ModuleGrid;
+	int SizeX, SizeY, SizeZ;
+	void GenerateGrid();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

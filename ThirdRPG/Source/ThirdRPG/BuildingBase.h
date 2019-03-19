@@ -11,7 +11,8 @@ enum class EBuildingTypes : uint8
 {
 	S_Wall UMETA(DisplayName = "Wall"),
 	S_Floor UMETA(DisplayName = "Floor"),
-	S_Ramp UMETA(DisplayName = "Ramp")
+	S_Ramp UMETA(DisplayName = "Ramp"),
+	S_Edit UMETA(DisplayName="Edit")
 };
 
 UCLASS()

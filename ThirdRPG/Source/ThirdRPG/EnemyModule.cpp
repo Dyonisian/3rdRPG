@@ -244,7 +244,7 @@ void AEnemyModule::InterpAimTarget(float deltaTime)
 {
 	CurrentAimPoint = FMath::VInterpConstantTo(CurrentAimPoint, TargetAimPoint, deltaTime, 300.f);
 	DrawDebugLine(GetWorld(), GetActorLocation(), CurrentAimPoint, FColor::Purple, true);
-	UE_LOG(LogTemp, Warning, TEXT("Current aim is %s"), *CurrentAimPoint.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("Target aim is %s"), *TargetAimPoint.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Current aim is %s"), *CurrentAimPoint.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("Target aim is %s"), *TargetAimPoint.ToString());
 
 }

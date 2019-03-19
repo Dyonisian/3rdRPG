@@ -133,6 +133,12 @@ void AThirdRPGCharacter::ActionBuildRamp()
 
 }
 
+void AThirdRPGCharacter::ActionBuildEdit()
+{
+	BuildingManager->PreviewBuildType(EBuildingTypes::S_Edit);
+	IsBuildMode = true;
+}
+
 void AThirdRPGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up gameplay key bindings
@@ -148,6 +154,8 @@ void AThirdRPGCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	PlayerInputComponent->BindAction("BuildWall", IE_Pressed, this, &AThirdRPGCharacter::ActionBuildWall);
 	PlayerInputComponent->BindAction("BuildFloor", IE_Pressed, this, &AThirdRPGCharacter::ActionBuildFloor);
 	PlayerInputComponent->BindAction("BuildRamp", IE_Pressed, this, &AThirdRPGCharacter::ActionBuildRamp);
+	PlayerInputComponent->BindAction("BuildEdit", IE_Pressed, this, &AThirdRPGCharacter::ActionBuildEdit);
+
 
 
 

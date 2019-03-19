@@ -13,7 +13,8 @@ enum class EModuleTypes : uint8
 	S_Armour UMETA(DisplayName = "Armour"),
 	S_Weak UMETA(DisplayName = "Weak"),
 	S_Gun UMETA(DisplayName= "Gun"),
-	S_Missile UMETA(DisplayName= "Missile")
+	S_Missile UMETA(DisplayName= "Missile"),
+	S_Leg UMETA(DisplayName = "Leg")
 };
 
 class AEnemyPawn;
@@ -53,7 +54,7 @@ protected:
 	const float MissileCooldown = 3.0f;
 	const float FlashCooldown = 0.1f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackRange = 5000.0f;
+	float AttackRange = 10000.0f;
 	bool IsFlashing;
 	int GunBurstCount = 0;
 	FVector CurrentAimPoint;

@@ -46,9 +46,19 @@ void AEnemyPawn::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Collision and overlap setup failed - Pawn"));
 	}
 	Health = MaxHealth;
-	MaxModules = FMath::RandRange(128, 1024);
+	MaxModules = FMath::RandRange(512, 4096);
 	AddModules();
-	
+	SizeX = SizeY = SizeZ = 5;
+	SizeZ = 2;
+	//ModuleGrid.Init(TArray<TArray<int>()>(0,SizeZ), SizeX);
+	TArray<int> Z;
+	Z.Init(0, SizeZ);
+	TArray < TArray<int>> Y;
+	Y.Init(Z,SizeY);
+	ModuleGrid.Init(Y, SizeX);
+	//GenerateGrid();
+	UE_LOG(LogTemp, Warning, TEXT("Size: %i, %i, %i"), ModuleGrid.Num(), ModuleGrid[0].Num(), ModuleGrid[0][0].Num());
+
 }
 
 void AEnemyPawn::AddModules()
@@ -104,6 +114,38 @@ void AEnemyPawn::AddModules()
 		ModuleCount++;
 	}
 	
+}
+
+void AEnemyPawn::GenerateGrid()
+{
+	for (int i = 0; i < SizeX; i++)
+	{
+		for (int j = 0; j < SizeY; j++)
+		{
+			for (int k = 0; k < SizeZ; k++)
+			{
+				//Bias the randomness
+				ModuleGrid[i][j][k] = FMath::RandRange(0, 4);
+				if (ModuleGrid[i][j][k] == 0)
+					continue;
+
+				FVector startPos = GetActorLocation() + FVector::UpVector * (SizeZ-k) * 300 - FVector::ForwardVector * (SizeX/2-i) * 300- FVector::RightVector * (SizeY/2-j) * 300;
+
+				FActorSpawnParameters spawnParams;
+				spawnParams.Owner = this;
+				//Rotation
+				
+				auto spawnedModule = Cast<AEnemyModule>(GetWorld()->SpawnActor<AActor>(ModuleList[ModuleGrid[i][j][k]], startPos, FRotator(), spawnParams));
+				FAttachmentTransformRules attachRules(EAttachmentRule::KeepWorld, false);
+				if (spawnedModule)
+				{
+					spawnedModule->AttachToActor(this, attachRules);
+					spawnedModule->SetOwnerPawn(this);
+				}
+				ModuleCount++;
+			}
+		}
+	}
 }
 
 // Called every frame

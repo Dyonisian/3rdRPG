@@ -55,6 +55,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TSubclassOf<class ABuildingBase>> BuildList;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float EditOffsetZ;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float EditOffsetX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float EditOffsetY;
+
+
 
 		
 };
