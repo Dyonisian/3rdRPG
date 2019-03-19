@@ -1,12 +1,12 @@
 # ThirdPersonRPG
 
-Third person shooter prototype inspired by Horizon Zero Dawn prototypes and final game
+Third person shooter/RPG prototype inspired by Fortnite and Horizon Zero Dawn
 
 Warning - Project repository is missing two folders - StarterContent, and ParagonLtBelica to reduce size
 Both are free assets. Get them in the Epic marketplace, import them into an empty project, and then copy-paste into the content folder of this project for the project to work properly
 
 ## Video - 
-[![Horizon Inspired Prototype Divij Sood](https://img.youtube.com/vi/nXW-zprmPlw/0.jpg)](https://www.youtube.com/watch?v=nXW-zprmPlw)
+[![Fortnite and Horizon Inspired Prototype Divij Sood](https://img.youtube.com/vi/hwuLpfL548E/0.jpg)](https://www.youtube.com/watch?v=hwuLpfL548E)
 
 
 ## Features
@@ -19,6 +19,7 @@ Character (ThirdRPGCharacter) -
 - Shoot (Left click or Right trigger)
 - Place trap (F key or Right face button on gamepad)
 - Health
+- Build System - Can build wall, floor, or ramp. Build previews/meshes snap and align to a grid. Built walls can be edited, creating a hole in one of 4 corners based on where the player is pointing.
 	
 Enemy - 
 -Modular/procedural enemy. Starts with a core block. The final "assembled" enemy varies in shape and size.
@@ -29,7 +30,7 @@ Core block (EnemyPawn) spawns pieces and attaches them to its faces. If the core
 	- Holder (grey) - Spawns and attaches more modules
 	- Armour (black) - Protects the core
 	- Weak spot (yellow) - Has low HP and may explode when destroyed, damaging modules near it
-	- Weapon (red) - Machine gun - Fast, weak projectiles
+	- Weapon (red) - Machine gun - Fast, weak projectiles. Turns slowly to aim towards the player like a turret.
 	- Weapon (red) - Missiles - Big, slow projectiles that explode and can blow up cover/obstacles
 	
 - AI - AI controller (EnemyAIController) that lets the enemy patrol or seek the player
