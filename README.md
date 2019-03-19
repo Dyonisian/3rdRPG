@@ -11,7 +11,7 @@ Both are free assets. Get them in the Epic marketplace, import them into an empt
 
 ## Features
 
-### Character (ThirdRPGCharacter) - 
+### Character (ThirdRPGCharacter, BuildingManager) - 
 
 - Move and jump
 - Dodge sideways to avoid fire (Left Ctrl or Left face button on gamepad)
@@ -21,7 +21,7 @@ Both are free assets. Get them in the Epic marketplace, import them into an empt
 - Health
 - Build System - Can build wall, floor, or ramp. Build previews/meshes snap and align to a grid. Built walls can be edited, creating a hole in one of 4 corners based on where the player is pointing.
 	
-### Enemy - 
+### Enemy (EnemyPawn, EnemyModule) - 
 
 Modular/procedural enemy. Starts with a core block. The final "assembled" enemy varies in shape and size.
 AI controller allows the enemy to patrol or seek the player. The player needs to be close enough for the AI to detect it.
