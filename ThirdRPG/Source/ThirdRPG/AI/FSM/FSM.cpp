@@ -9,3 +9,7 @@ FSM::FSM()
 FSM::~FSM()
 {
 }
+
+void FSM::Update(AActor * Actor)
+{
+}

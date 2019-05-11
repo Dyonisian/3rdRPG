@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSMState, FSM, Fsm, AActor*, Actor);
+#include "Runtime/Core/Public/Delegates/Delegate.h"
 class AActor;
+
 /**
  * 
  */
@@ -14,13 +15,19 @@ public:
 	FSM();
 	~FSM();
 	void Update(AActor* Actor);
+	//TODO there needs to be a stack of states here
+	//FSMSTATE FSMState;
 	//void FSMState(FSM fsm, AActor* Actor);
 	//void PushState(FSMState* State) { StateStack.Push(State); }
-	//void PopState() { StateStack.Pop(); }
+	//void PopState() { StateStack.Pop(); }	
+	//
+	//FSMSTATE IdleState;
+	//FSMSTATE MoveToState;
+	//FSMSTATE PerformActionState;
 
 private:
 	//TArray<FSMState*> StateStack;
-
-	FSMState FsmState;
-
+	
 };
+
+

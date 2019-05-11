@@ -4,35 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-//#include "../FSM/FSM2.h"
-#include "GoapAgent.generated.h"
+#include "FSM2.generated.h"
 
 class AActor;
-class UFSM2;
-class GoapAction;
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSMSTATE, FSM*, Fsm, AActor*, Actor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSMSTATE, UFSM2*, Fsm, AActor*, Actor);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class THIRDRPG_API UGoapAgent : public UActorComponent
+class THIRDRPG_API UFSM2 : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UGoapAgent();
+	UFSM2();
+	void Update(AActor* Actor);
+	//TODO there needs to be a stack of states here
+	
+	void FSMState(UFSM2* fsm, AActor* Actor);
+	void PushState(FSMSTATE* State) { StateStack.Push(State); }
+	void PopState() { StateStack.Pop(); }	
+	//
+	//FSMSTATE IdleState;
+	//FSMSTATE MoveToState;
+	//FSMSTATE PerformActionState;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	TArray<FSMSTATE*> StateStack;
 
-	UFSM2* StateMachine;
-
-	TMap<FString, GoapAction*> AvailableActions;
-	TArray<GoapAction*> CurrentActionsQueue;
-
-	//IGoap DataProvider;
-
-	//GoapPlanner Planner;
-	 
 
 public:	
 	// Called every frame
