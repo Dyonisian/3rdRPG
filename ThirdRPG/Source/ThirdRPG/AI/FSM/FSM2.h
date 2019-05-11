@@ -19,7 +19,6 @@ public:
 	void Update(AActor* Actor);
 	//TODO there needs to be a stack of states here
 	
-	void FSMState(UFSM2* fsm, AActor* Actor);
 	void PushState(FSMSTATE* State) { StateStack.Push(State); }
 	void PopState() { StateStack.Pop(); }	
 	//

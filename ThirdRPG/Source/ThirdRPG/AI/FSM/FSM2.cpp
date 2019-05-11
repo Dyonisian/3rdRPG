@@ -13,6 +13,10 @@ UFSM2::UFSM2()
 }
 
 
+void UFSM2::Update(AActor * Actor)
+{
+}
+
 // Called when the game starts
 void UFSM2::BeginPlay()
 {

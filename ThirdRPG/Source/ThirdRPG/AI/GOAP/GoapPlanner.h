@@ -36,7 +36,7 @@ public:
 	* Returns null if a plan could not be found, or a list of the actions
 	* that must be performed, in order, to fulfill the goal.
 	*/
-	TArray<GoapAction*> Plan(AActor* Agent, TMap<FString, GoapAction*> AvailableActions, TMap<FString, bool> WorldState, TMap<FString, bool> Goal);
+	TArray<GoapAction*> Plan(AActor* Agent, TSet<GoapAction*> AvailableActions, TMap<FString, bool> WorldState, TMap<FString, bool> Goal);
 
 	/**
 	* Returns true if at least one solution was found.
@@ -44,11 +44,11 @@ public:
 	* 'runningCost' value where the lowest cost will be the best action
 	* sequence.
 	*/	
-	bool BuildGraph(Node* parent, TArray<Node*> Leaves, TMap<FString, GoapAction*> UsableActions, TMap<FString,bool> Goal);
+	bool BuildGraph(Node* parent, TArray<Node*> Leaves, TSet<GoapAction*> UsableActions, TMap<FString,bool> Goal);
 	/**
 	* Create a subset of the actions excluding the removeMe one. Creates a new set.
 	*/
-	TMap<FString, GoapAction*> ActionSubset(TMap<FString, GoapAction*> Actions, GoapAction* RemoveMe);
+	TSet<GoapAction*> ActionSubset(TSet<GoapAction*> Actions, GoapAction* RemoveMe);
 	/**
 	* Check that all items in 'test' are in 'state'. If just one does not match or is not there
 	* then this returns false.
