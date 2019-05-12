@@ -3,6 +3,21 @@
 #include "GoapPlanner.h"
 #include "GoapActionC.h"
 
+/*
+Sample plan for shooter
+
+Actions
+Attack – Cost: Low Preconditions: “In range”, has ammo Effect: Attacking
+Seek – Cost: Preconditions: “In sight” Effect: Seeking
+Wander – Cost: Very High Preconditions: None Effect: Wandering
+Super – Cost: Very Low Preconditions: “Charged” Effect: Super – Double rotation and firing speed
+Shield – Cost: High (Lowered when being healed) Preconditions: None Effect: Projects shield
+Heal self – Cost: Very High (Reduced by being damaged) Preconditions: "Damaged"  Effect: Healing
+Heal ally – Cost: Low (Increased by being damaged) Preconditions: "Damaged ally in range" Effect: Healing ally
+Seek Ally – Cost: Low (Increased by being damaged) Preconditions: None Effect: Move towards (damaged) ally
+Collect ammo – Cost: High Preconditions: "Low ammo" Effect: Seek charging station
+
+*/
 GoapPlanner::GoapPlanner()
 {
 }
