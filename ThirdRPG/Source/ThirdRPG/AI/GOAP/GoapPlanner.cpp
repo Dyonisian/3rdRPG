@@ -1,7 +1,7 @@
  // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GoapPlanner.h"
-#include "GoapAction.h"
+#include "GoapActionC.h"
 
 GoapPlanner::GoapPlanner()
 {
@@ -11,14 +11,14 @@ GoapPlanner::~GoapPlanner()
 {
 }
 
-TArray<GoapAction*> GoapPlanner::Plan(AActor * Agent, TSet<GoapAction*> AvailableActions, TMap<FString, bool> WorldState, TMap<FString, bool> Goal)
+TArray<UGoapActionC*> GoapPlanner::Plan(AActor * Agent, TSet<UGoapActionC*> AvailableActions, TMap<FString, bool> WorldState, TMap<FString, bool> Goal)
 {
 	for (auto &a : AvailableActions)
 	{
 		a->DoReset();
 	}
 
-	TSet<GoapAction*> UsableActions;
+	TSet<UGoapActionC*> UsableActions;
 	for (auto &a : AvailableActions)
 	{
 		if (a->CheckProceduralPrecondition(Agent))
@@ -34,7 +34,7 @@ TArray<GoapAction*> GoapPlanner::Plan(AActor * Agent, TSet<GoapAction*> Availabl
 	if (!Success)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No plan"));
-		return TArray<GoapAction*>();
+		return TArray<UGoapActionC*>();
 	}
 
 	Node* Cheapest = nullptr;
@@ -53,7 +53,7 @@ TArray<GoapAction*> GoapPlanner::Plan(AActor * Agent, TSet<GoapAction*> Availabl
 		}
 	}
 
-	TArray<GoapAction*> Result;
+	TArray<UGoapActionC*> Result;
 	Node* n = Cheapest;
 
 	while (n != nullptr)
@@ -68,7 +68,7 @@ TArray<GoapAction*> GoapPlanner::Plan(AActor * Agent, TSet<GoapAction*> Availabl
 	return Result;
 }
 
-bool GoapPlanner::BuildGraph(Node * parent, TArray<Node*> Leaves, TSet<GoapAction*> UsableActions, TMap<FString, bool> Goal)
+bool GoapPlanner::BuildGraph(Node * parent, TArray<Node*> Leaves, TSet<UGoapActionC*> UsableActions, TMap<FString, bool> Goal)
 {
 	bool FoundOne = false;
 	for (auto &action : UsableActions)
@@ -85,7 +85,7 @@ bool GoapPlanner::BuildGraph(Node * parent, TArray<Node*> Leaves, TSet<GoapActio
 			}
 			else
 			{
-				TSet<GoapAction*> subset = ActionSubset(UsableActions, action);
+				TSet<UGoapActionC*> subset = ActionSubset(UsableActions, action);
 				bool found = BuildGraph(node, Leaves, subset, Goal);
 				if (found)
 					FoundOne = true;
@@ -95,9 +95,9 @@ bool GoapPlanner::BuildGraph(Node * parent, TArray<Node*> Leaves, TSet<GoapActio
 	return FoundOne;
 }
 
-TSet<GoapAction*> GoapPlanner::ActionSubset(TSet<GoapAction*> Actions, GoapAction * RemoveMe)
+TSet<UGoapActionC*> GoapPlanner::ActionSubset(TSet<UGoapActionC*> Actions, UGoapActionC * RemoveMe)
 {
-	TSet<GoapAction*> subset;
+	TSet<UGoapActionC*> subset;
 	for (auto a : Actions)
 	{
 		if (a != RemoveMe)

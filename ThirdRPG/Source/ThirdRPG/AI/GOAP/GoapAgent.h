@@ -9,7 +9,7 @@
 
 class AActor;
 class UFSM2;
-class GoapAction;
+class UGoapActionC;
 class IIGoap;
 class GoapPlanner;
 class FSMSTATE;
@@ -32,8 +32,8 @@ protected:
 	FSMSTATE* MoveToState;
 	FSMSTATE* PerformActionState;
 
-	TSet<GoapAction*> AvailableActions;
-	TArray<GoapAction*> CurrentActionsQueue;
+	TSet<UGoapActionC*> AvailableActions;
+	TArray<UGoapActionC*> CurrentActionsQueue;
 
 	IIGoap* DataProvider;
 
@@ -52,9 +52,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void AddAction(GoapAction* action) { AvailableActions.Add(action); }
-	GoapAction* GetAction(GoapAction* action);
-	void RemoveAction(GoapAction* action) { AvailableActions.Remove(action); }
+	void AddAction(UGoapActionC* action) { AvailableActions.Add(action); }
+	UGoapActionC* GetAction(UGoapActionC* action);
+	void RemoveAction(UGoapActionC* action) { AvailableActions.Remove(action); }
 	bool HasActionPlan() { return CurrentActionsQueue.Num() > 0; }
 
 };

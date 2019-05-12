@@ -6,7 +6,7 @@
 
 class AActor;
 /**
- * 
+ * UNUSED - Using UGoapActionC instead 
  */
 class THIRDRPG_API GoapAction
 {

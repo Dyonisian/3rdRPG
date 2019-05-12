@@ -3,7 +3,7 @@
 #include "GoapAgent.h"
 #include "../FSM/FSM2.h"
 #include "GoapPlanner.h"
-#include "GoapAction.h"
+#include "GoapActionC.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "IGoap.h"
 
@@ -56,20 +56,19 @@ void UGoapAgent::CreateIdleState(UFSM2* Fsm, AActor* Actor)
 {
 	//Goap planning
 	
-	TMap<FString, bool> worldState = DataProvider->GetWorldState();
+	TMap<FString, bool> worldState = IIGoap::Execute_GetWorldState(DataProvider->_getUObject());
 	TMap<FString, bool> goal = DataProvider->CreateGoalState();
 
-	TArray<GoapAction*> plan = Planner->Plan(GetOwner(), AvailableActions, worldState, goal);
+	TArray<UGoapActionC*> plan = Planner->Plan(GetOwner(), AvailableActions, worldState, goal);
 	if (plan.Num()!=0)
 	{
 		CurrentActionsQueue = plan;
-		DataProvider->PlanFound(goal, plan);
+		//DataProvider->PlanFound(goal, plan);
 		Fsm->PopState();
 		Fsm->PushState(PerformActionState);
 	}
 	else
-	{
-		
+	{		
 		UE_LOG(LogTemp, Warning, TEXT("Failed plan!"));
 		DataProvider->PlanFailed(goal);
 		Fsm->PopState();
@@ -80,7 +79,7 @@ void UGoapAgent::CreateIdleState(UFSM2* Fsm, AActor* Actor)
 
 void UGoapAgent::CreateMoveToState(UFSM2* Fsm, AActor* Actor)
 {
-	GoapAction* action = CurrentActionsQueue[0];
+	UGoapActionC* action = CurrentActionsQueue[0];
 	if (action->RequiresInRange() && action->Target == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Action requires target but has none"));
@@ -90,7 +89,7 @@ void UGoapAgent::CreateMoveToState(UFSM2* Fsm, AActor* Actor)
 		return;
 	}
 
-	if (DataProvider->MoveAgent(action))
+	//if (DataProvider->MoveAgent(action))
 	{
 		Fsm->PopState();
 	}
@@ -98,7 +97,7 @@ void UGoapAgent::CreateMoveToState(UFSM2* Fsm, AActor* Actor)
 
 void UGoapAgent::CreatePerformActionState(UFSM2* Fsm, AActor* Actor)
 {
-	if (!HasActionPlan)
+	if (!HasActionPlan())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Done actions"));
 		Fsm->PopState();
@@ -106,7 +105,7 @@ void UGoapAgent::CreatePerformActionState(UFSM2* Fsm, AActor* Actor)
 		DataProvider->ActionsFinished();
 		return;
 	}
-	GoapAction* action = CurrentActionsQueue[0];
+	UGoapActionC* action = CurrentActionsQueue[0];
 	if (action->IsDone())
 	{
 		CurrentActionsQueue.Remove(CurrentActionsQueue[0]);
@@ -122,7 +121,7 @@ void UGoapAgent::CreatePerformActionState(UFSM2* Fsm, AActor* Actor)
 			{
 				Fsm->PopState();
 				Fsm->PushState(IdleState);
-				DataProvider->PlanAborted(action);
+			//	DataProvider->PlanAborted(action);
 			}
 			
 		}
@@ -141,13 +140,12 @@ void UGoapAgent::CreatePerformActionState(UFSM2* Fsm, AActor* Actor)
 
 void UGoapAgent::LoadActions()
 {
-/*
-	auto actions = GetOwner()->GetComponentsByClass(GoapAction::StaticClass());
+	auto actions = GetOwner()->GetComponentsByClass(UGoapActionC::StaticClass());
 	for (auto a : actions)
 	{
-		AvailableActions.Add(Cast<GoapAction>(a));
+		AvailableActions.Add(Cast<UGoapActionC>(a));
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Found actions"));*/
+	UE_LOG(LogTemp, Warning, TEXT("Found actions"));
 }
 
 // Called every frame
@@ -158,7 +156,7 @@ void UGoapAgent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	// ...
 }
 
-GoapAction * UGoapAgent::GetAction(GoapAction * action)
+UGoapActionC * UGoapAgent::GetAction(UGoapActionC * action)
 {
 	for (auto &g : AvailableActions)
 	{
