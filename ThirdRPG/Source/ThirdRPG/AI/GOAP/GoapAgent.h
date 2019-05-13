@@ -28,23 +28,30 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFSM2* StateMachine;
-	FSMSTATE* IdleState;
+	//Finds something to do
+	FSMSTATE* IdleState; 
+	//Moves to a target
 	FSMSTATE* MoveToState;
+	//Performs an action
 	FSMSTATE* PerformActionState;
 
 	TSet<UGoapActionC*> AvailableActions;
 	TArray<UGoapActionC*> CurrentActionsQueue;
 
+	//This is the implementing class that provides our world data and listens to feedback on planning
 	IIGoap* DataProvider;
 
 	GoapPlanner* Planner;
 
 	void FindDataProvider();
 	UFUNCTION()
+	//Bound to delegate for idle state
 	void CreateIdleState(UFSM2* Fsm, AActor* Actor);
 	UFUNCTION()
+	//Bound to delegate for move state
 	void CreateMoveToState(UFSM2* Fsm, AActor* Actor);
 	UFUNCTION()
+	//Bound to delegate for perform action state
 	void CreatePerformActionState(UFSM2* Fsm, AActor* Actor);
 	void LoadActions();
 	 
