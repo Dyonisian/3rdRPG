@@ -63,7 +63,7 @@ void UGoapAgent::CreateIdleState(UFSM2* Fsm, AActor* Actor)
 	if (plan.Num()!=0)
 	{
 		CurrentActionsQueue = plan;
-		//DataProvider->PlanFound(goal, plan);
+		DataProvider->PlanFound(goal, plan);
 		Fsm->PopState();
 		Fsm->PushState(PerformActionState);
 	}
@@ -89,7 +89,7 @@ void UGoapAgent::CreateMoveToState(UFSM2* Fsm, AActor* Actor)
 		return;
 	}
 
-	//if (DataProvider->MoveAgent(action))
+	if (DataProvider->MoveAgent(action))
 	{
 		Fsm->PopState();
 	}
@@ -121,7 +121,7 @@ void UGoapAgent::CreatePerformActionState(UFSM2* Fsm, AActor* Actor)
 			{
 				Fsm->PopState();
 				Fsm->PushState(IdleState);
-			//	DataProvider->PlanAborted(action);
+				DataProvider->PlanAborted(action);
 			}
 			
 		}
