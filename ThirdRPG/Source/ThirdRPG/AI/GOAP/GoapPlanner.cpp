@@ -4,7 +4,7 @@
 #include "GoapActionC.h"
 
 /*
-Sample plan for shooter
+Sample actions, costs, conditions for shooter with procedural enemy
 
 Actions
 Attack – Cost: Low Preconditions: “In range”, has ammo Effect: Attacking

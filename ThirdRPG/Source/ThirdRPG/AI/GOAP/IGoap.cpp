@@ -4,7 +4,5 @@
 
 // Add default functionality here for any IIGoap functions that are not pure virtual.
 
-void IIGoap::PlanFailed(TMap<FString, bool> FailedGoal)
-{
-}
+
 

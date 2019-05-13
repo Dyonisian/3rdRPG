@@ -57,20 +57,22 @@ void UGoapAgent::CreateIdleState(UFSM2* Fsm, AActor* Actor)
 	//Goap planning
 	
 	TMap<FString, bool> worldState = IIGoap::Execute_GetWorldState(DataProvider->_getUObject());
-	TMap<FString, bool> goal = DataProvider->CreateGoalState();
+	TMap<FString, bool> goal = IIGoap::Execute_CreateGoalState(DataProvider->_getUObject());
 
 	TArray<UGoapActionC*> plan = Planner->Plan(GetOwner(), AvailableActions, worldState, goal);
 	if (plan.Num()!=0)
 	{
 		CurrentActionsQueue = plan;
-		DataProvider->PlanFound(goal, plan);
+		//DataProvider->PlanFound(goal, plan);
+		IIGoap::Execute_PlanFound(DataProvider->_getUObject(),goal,plan);
 		Fsm->PopState();
 		Fsm->PushState(PerformActionState);
 	}
 	else
 	{		
 		UE_LOG(LogTemp, Warning, TEXT("Failed plan!"));
-		DataProvider->PlanFailed(goal);
+		//DataProvider->PlanFailed(goal);
+		IIGoap::Execute_PlanFailed(DataProvider->_getUObject(), goal);
 		Fsm->PopState();
 		Fsm->PushState(IdleState);
 	}
@@ -89,7 +91,8 @@ void UGoapAgent::CreateMoveToState(UFSM2* Fsm, AActor* Actor)
 		return;
 	}
 
-	if (DataProvider->MoveAgent(action))
+	if (IIGoap::Execute_MoveAgent(DataProvider->_getUObject(), action)
+	)
 	{
 		Fsm->PopState();
 	}
@@ -102,7 +105,7 @@ void UGoapAgent::CreatePerformActionState(UFSM2* Fsm, AActor* Actor)
 		UE_LOG(LogTemp, Warning, TEXT("Done actions"));
 		Fsm->PopState();
 		Fsm->PushState(IdleState);
-		DataProvider->ActionsFinished();
+		IIGoap::Execute_ActionsFinished(DataProvider->_getUObject());
 		return;
 	}
 	UGoapActionC* action = CurrentActionsQueue[0];
@@ -121,7 +124,7 @@ void UGoapAgent::CreatePerformActionState(UFSM2* Fsm, AActor* Actor)
 			{
 				Fsm->PopState();
 				Fsm->PushState(IdleState);
-				DataProvider->PlanAborted(action);
+				IIGoap::Execute_PlanAborted(DataProvider->_getUObject(),action);
 			}
 			
 		}
@@ -134,7 +137,7 @@ void UGoapAgent::CreatePerformActionState(UFSM2* Fsm, AActor* Actor)
 	{
 		Fsm->PopState();
 		Fsm->PushState(IdleState);
-		DataProvider->ActionsFinished();
+		IIGoap::Execute_ActionsFinished(DataProvider->_getUObject());
 	}
 }
 

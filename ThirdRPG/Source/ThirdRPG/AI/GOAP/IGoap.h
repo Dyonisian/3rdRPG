@@ -6,13 +6,14 @@
 #include "UObject/Interface.h"
 #include "IGoap.generated.h"
 
+class UGoapActionC;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UIGoap : public UInterface
 {
 	GENERATED_BODY()
 };
-class UGoapActionC;
 /**
  * Any agent that wants to use GOAP must implement
  * this interface. It provides information to the GOAP
@@ -44,14 +45,14 @@ public:
 	* No sequence of actions could be found for the supplied goal.
 	* You will need to try another goal
 	*/
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Goap")
-	void PlanFailed (TMap<FString, bool> FailedGoal);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Goap")
+	void PlanFailed (const TMap<FString, bool>& FailedGoal);
 	/**
 	* A plan was found for the supplied goal.
 	* These are the actions the Agent will perform, in order.
 	*/
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Goap")
-	void PlanFound(TMap<FString, bool> Goal, TArray<UGoapActionC*> Actions);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Goap")
+	void PlanFound(const TMap<FString, bool>& Goal, const TArray<UGoapActionC*>& Actions);
 	/**
 	* All actions are complete and the goal was reached. Hooray!
 	*/
@@ -61,7 +62,7 @@ public:
 	* One of the actions caused the plan to abort.
 	* That action is returned.
 	*/
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Goap")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Goap")
 	void PlanAborted(UGoapActionC* Aborter);
 	/**
 	* Called during Update. Move the agent towards the target in order
@@ -69,7 +70,7 @@ public:
 	* Return true if the Agent is at the target and the next action can perform.
 	* False if it is not there yet.
 	*/
-	//UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Goap")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Goap")
 	bool MoveAgent(UGoapActionC* NextAction);
 
 };
