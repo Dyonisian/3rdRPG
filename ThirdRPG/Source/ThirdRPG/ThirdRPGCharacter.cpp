@@ -269,7 +269,7 @@ void AThirdRPGCharacter::ActionFire()
 	FHitResult outHit;
 	FCollisionQueryParams collisionParams;
 
-	DrawDebugLine(GetWorld(), startPos, endPos, FColor::Green, true);
+	DrawDebugLine(GetWorld(), startPos, endPos, FColor::Green, false, 1.0f);
 	if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
 	{
 		if (outHit.bBlockingHit)

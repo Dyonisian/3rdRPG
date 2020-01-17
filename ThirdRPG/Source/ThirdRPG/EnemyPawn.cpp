@@ -81,7 +81,7 @@ void AEnemyPawn::AddModules()
 		FHitResult outHit;
 		FCollisionQueryParams collisionParams;
 
-		DrawDebugLine(GetWorld(), startPos, endPos, FColor::Blue, true);
+		DrawDebugLine(GetWorld(), startPos, endPos, FColor::Blue, false, 1.0f);
 		//Check if space is already occupied by an object or another module
 		if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
 		{

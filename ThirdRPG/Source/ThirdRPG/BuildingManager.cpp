@@ -108,7 +108,7 @@ void UBuildingManager::PreviewBuildType(EBuildingTypes buildType)
 	spawnParams.Owner = GetOwner();
 	FVector startPos = ToGridLocation(GetPlayerLookAtLocation(400.0f));
 	FRotator startRot = FRotator(0,ToGridRotation(PlayerCharacter->GetFollowCamera()->GetComponentRotation().Yaw +90),0);
-	UE_LOG(LogTemp, Warning, TEXT("Rotator is %f %f %f"), startRot.Pitch, startRot.Roll, startRot.Yaw);
+	//UE_LOG(LogTemp, Warning, TEXT("Rotator is %f %f %f"), startRot.Pitch, startRot.Roll, startRot.Yaw);
 
 	if (BuildPreviewList.Num()>(int)BuildType)
 	{
@@ -134,7 +134,7 @@ void UBuildingManager::Build()
 				FHitResult outHit;
 				FCollisionQueryParams collisionParams;
 
-				DrawDebugLine(GetWorld(), startPos, endPos, FColor::Blue, true);
+				DrawDebugLine(GetWorld(), startPos, endPos, FColor::Blue, false, 1.0f);
 				//Check if space is already occupied by a build object
 				if (GetWorld()->LineTraceSingleByChannel(outHit, startPos, endPos, ECC_Visibility, collisionParams))
 				{
