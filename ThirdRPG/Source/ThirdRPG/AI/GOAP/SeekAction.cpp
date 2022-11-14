@@ -9,8 +9,8 @@ void USeekAction::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 void USeekAction::BeginPlay()
 {
-	AddPrecondition("hasReachedTarget", false);
-	AddEffect("hasReachedTarget", true);
+	AddPrecondition("HasReachedTarget", false);
+	AddEffect("HasReachedTarget", true);
 }
 
 bool USeekAction::RequiresInRange()
