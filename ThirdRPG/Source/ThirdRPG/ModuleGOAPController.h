@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "IGoap.h"
+#include "AI/GOAP/IGoap.h"
 #include "ModuleGOAPController.generated.h"
 
 class AEnemyPawn;
